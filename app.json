@@ -1,7 +1,8 @@
 {
   "expo": {
     "name": "Soma",
-    "slug": "Soma",
+    "slug": "soma",
+    "scheme": "soma",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +26,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "68d174ce-4253-4e55-8bd9-8c7865fdf30d"
+      }
+    },
+    "owner": "an26k"
   }
 }
