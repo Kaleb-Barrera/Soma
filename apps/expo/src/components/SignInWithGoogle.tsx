@@ -1,12 +1,10 @@
 import React from "react";
 import { useSignIn, useSignUp } from "@clerk/clerk-expo";
 import * as AuthSession from "expo-auth-session";
-import * as WebBrowser from "expo-web-browser"
 import { Text, TouchableOpacity } from "react-native";
-import { log } from "../logger";
-import { styles } from "./Styles";
+import { styles } from "../utils/Styles";
 
-export function SignInWithOauth() {
+export default function SignInWithGoogle() {
     const { signIn, setSession, isLoaded } = useSignIn();
     const { signUp } = useSignUp();
 
@@ -75,17 +73,17 @@ export function SignInWithOauth() {
                 await setSession(signUp.createdSessionId);
             }
         } catch (err: any) {
-            log("Error:> " + err?.status || '');
-            log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+            console.log("Error:> " + err?.status || '');
+            console.log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
         }
     }, []);
 
     return (
         <TouchableOpacity
-            style={{ ...styles.secondaryButton, marginBottom: 20 }}
+            className="my-4 rounded p-3 items-center justify-center bg-white border-2 border-black"
             onPress={onPress}
         >
-            <Text style={styles.secondaryButtonText}> Ingresa con Google</Text>
+            <Text className="text-black font-bold mb-5 dark:text-white"> Ingresa con Google</Text>
         </TouchableOpacity>
     );
 }

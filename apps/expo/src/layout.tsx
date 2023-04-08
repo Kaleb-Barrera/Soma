@@ -2,12 +2,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import * as React from "react";
 
-import LoginScreen from "../screens/LoginScreen";
-import MyProfileScreen from "../screens/MyProfileScreen";
-import { RootStackParamList } from "./types";
+import Login from "./screens/Login";
+import Profile from "./screens/Profile";
+import { type RootStackParamList } from "./types/react-navigation";
 import { ClerkLoaded, SignedIn, SignedOut } from "@clerk/clerk-expo";
 
-export default function Navigation() {
+export default function Layout() {
     return (
         <NavigationContainer>
             <RootNavigator />
@@ -21,22 +21,24 @@ const RootNavigator = () => {
 
     return (
         <ClerkLoaded>
-            <Stack.Navigator>
-                <SignedIn>
+            <SignedIn>
+                <Stack.Navigator>
                     <Stack.Screen
-                        name="MyProfile"
-                        component={MyProfileScreen}
+                        name="Profile"
+                        component={Profile}
                         options={{ title: "Mi perfil " }}
                     />
-                </SignedIn>
-                <SignedOut>
+                </Stack.Navigator>
+            </SignedIn>
+            <SignedOut>
+                <Stack.Navigator>
                     <Stack.Screen
-                        name="SignIn"
-                        component={LoginScreen}
+                        name="Login"
+                        component={Login}
                         options={{ title: " Inicia sesión " }}
                     />
-                </SignedOut>
-            </Stack.Navigator>
+                </Stack.Navigator>
+            </SignedOut>
         </ClerkLoaded>
     );
 };
