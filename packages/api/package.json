@@ -1,0 +1,22 @@
+{
+  "name": "@soma/api",
+  "version": "1.0.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@soma/db": "^1.0.0",
+    "@trpc/client": "^10.18.0",
+    "@trpc/server": "^10.18.0",
+    "superjson": "1.9.1",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@soma/eslint-config": "^1.0.0",
+    "eslint": "^8.37.0",
+    "typescript": "^5.0.3"
+  }
+}

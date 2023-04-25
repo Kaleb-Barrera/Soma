@@ -1,31 +1,29 @@
 {
-    "name": "soma-monorepo",
-    "private": true,
-    "version": "1.0.0",
-    "workspaces": [
-        "apps/expo",
-        "apps/nextjs",
-        "packages/config/*",
-        "packages/shared/*"
-    ],
-    "engines": {
-        "node": "^18.15.0"
-    },
-    "packageManager": "npm@9.5.0",
-    "scripts": {
-        "dev": "turbo run dev --parallel",
-        "lint": "turbo run lint",
-        "lint:fix": "turbo run lint:fix"
-    },
-    "dependencies": {
-        "eslint": "^8.37.0",
-        "eslint-config-next": "^13.3.0",
-        "eslint-config-prettier": "^8.8.0",
-        "eslint-config-react": "^1.1.7",
-        "eslint-config-turbo": "^1.8.8",
-        "next": "^13.3.0"
-    },
-    "devDependencies": {
-        "babel-preset-expo": "^9.3.2"
-    }
+  "name": "soma",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/config/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": "^18.15.0"
+  },
+  "packageManager": "npm@9.5.0",
+  "scripts": {
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo lint:fix && manypkg fix",
+    "db-generate": "turbo db-generate",
+    "db-push": "turbo db-push"
+  },
+  "dependencies": {
+    "eslint": "^8.37.0",
+    "eslint-config-next": "^13.3.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-config-turbo": "^1.8.8",
+    "next": "^13.3.0"
+  }
 }
