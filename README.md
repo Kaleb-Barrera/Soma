@@ -1,5 +1,5 @@
 
-# Soma - Conectando mentes![Logo](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/th5xamgrr6se0x5ro4g6.png)
+# Soma - Conectando mentes![Logo](https://i.postimg.cc/13LS22DD/logo-soma-azul-bg-trans.png)
 Una aplicación móvil diseñada para crear un mejor puente entre maestros y estudiantes al proveer una plataforma en la que puedan interactuar sin dejar de lado el aspecto escolar y profesional.
 
 Ahora mismo el proyecto es privado y diseñado solo para que nosotros lo usemos.
