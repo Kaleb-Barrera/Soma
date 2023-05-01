@@ -1,11 +1,10 @@
-import { createTRPCRouter, protectedProcedure, publicProcedure } from "../trpc";
+import { TRPCrouter, protectedProcedure, publicProcedure } from "../trpc";
 
-export const authRouter = createTRPCRouter({
+export const authRouter = TRPCrouter({
   getSession: publicProcedure.query(({ ctx }) => {
-    return ctx.session;
+    return ctx.auth.session;
   }),
   getSecretMessage: protectedProcedure.query(() => {
-    // testing type validation of overridden next-auth Session in @acme/auth package
     return "you can see this secret message!";
   }),
 });

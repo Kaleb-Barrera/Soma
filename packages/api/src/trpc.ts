@@ -12,6 +12,11 @@ import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { prisma } from "@soma/db";
+import { getAuth } from "@clerk/nextjs/server";
+import type {
+  SignedInAuthObject,
+  SignedOutAuthObject,
+} from "@clerk/nextjs/api";
 
 /**
  * 1. CONTEXT
@@ -22,8 +27,8 @@ import { prisma } from "@soma/db";
  * processing a request
  *
  */
-type CreateContextOptions = {
-  session: Session | null;
+type AuthContextProps = {
+  auth: SignedInAuthObject | SignedOutAuthObject;
 };
 
 /**
@@ -35,11 +40,12 @@ type CreateContextOptions = {
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
-const createInnerTRPCContext = (opts: CreateContextOptions) => {
+
+const createInnerTRPCContext = async ({ auth }: AuthContextProps) => {
   return {
-    session: opts.session,
-    prisma,
-  };
+    auth,
+    prisma
+  }
 };
 
 /**
@@ -48,13 +54,8 @@ const createInnerTRPCContext = (opts: CreateContextOptions) => {
  * @link https://trpc.io/docs/context
  */
 export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  const { req, res } = opts;
-
-  // Get the session from the server using the unstable_getServerSession wrapper function
-  const session = await getServerSession({ req, res });
-
-  return createInnerTRPCContext({
-    session,
+  return await createInnerTRPCContext({
+    auth: getAuth(opts.req)
   });
 };
 
@@ -89,7 +90,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
  * This is how you create new routers and subrouters in your tRPC API
  * @see https://trpc.io/docs/router
  */
-export const createTRPCRouter = t.router;
+export const TRPCrouter = t.router;
 
 /**
  * Public (unauthed) procedure
@@ -105,13 +106,12 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.session?.user) {
-    throw new TRPCError({ code: "UNAUTHORIZED" });
+  if (!ctx.auth.userId) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
   }
   return next({
     ctx: {
-      // infers the `session` as non-nullable
-      session: { ...ctx.session, user: ctx.session.user },
+      auth: ctx.auth,
     },
   });
 });

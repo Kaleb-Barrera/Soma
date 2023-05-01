@@ -13,8 +13,8 @@ export default function SignOutButton() {
     };
 
     return (
-        <TouchableOpacity onPress={onSignOutPress} className="mt-4 p-2 w-28 bg-blue-500 items-center rounded">
-            <Text className="text-base text-white">Sign out</Text>
+        <TouchableOpacity onPress={onSignOutPress} className="mt-4 p-4 bg-blue-500 items-center rounded">
+            <Text className="text-base text-white"> Cerrar sesión</Text>
         </TouchableOpacity>
     )
 }

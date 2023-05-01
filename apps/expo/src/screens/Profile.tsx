@@ -10,6 +10,8 @@ export default function Profile() {
   // const { getToken } = useAuth();
   const { user } = useUser();
 
+  if (user === null) return <View />
+
   // const [sessionToken, setSessionToken] = React.useState("");
 
 
@@ -24,8 +26,8 @@ export default function Profile() {
   //
   return (
     <View className="flex-1 justify-center items-center bg-white">
-      <Text className="text-lg font-bold">Hello {user?.firstName}</Text>
-      <Image source={{ uri: user?.profileImageUrl }} className="w-40 h-40" />
+      <Text className="text-3xl font-bold">Hola {user.firstName}!</Text>
+      <Image source={{ uri: user.profileImageUrl }} className="w-40 h-40 rounded-full" />
       <SignOutButton />
     </View>
   );
