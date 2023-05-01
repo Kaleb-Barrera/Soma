@@ -1,14 +1,15 @@
 {
   "name": "@soma/db",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./index.ts",
   "types": "./index.ts",
   "license": "MIT",
   "scripts": {
+    "install:locally": "npm install",
     "clean": "rm -rf .turbo node_modules",
     "dev": "npm run with-env prisma studio --port 5556",
-    "db-push": "npm run with-env prisma db push",
-    "db-generate": "npm run with-env prisma generate",
+    "db:push": "npm run with-env prisma db push",
+    "db:generate": "npm run with-env prisma generate",
     "with-env": "dotenv -e ../../.env -c --"
   },
   "dependencies": {

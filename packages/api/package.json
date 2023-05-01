@@ -1,9 +1,10 @@
 {
   "name": "@soma/api",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "./index.ts",
   "types": "./index.ts",
   "scripts": {
+    "install:locally": "npm install",
     "clean": "rm -rf .turbo node_modules",
     "lint": "eslint ."
   },

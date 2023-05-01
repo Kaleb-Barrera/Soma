@@ -3,10 +3,14 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "install:locally": "npm install",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "npm run lint --fix"
+  },
+  "dependencies": {
+    "next": "^13.3.0"
   }
 }

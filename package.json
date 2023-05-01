@@ -12,18 +12,12 @@
   },
   "packageManager": "npm@9.5.0",
   "scripts": {
-    "dev": "turbo run dev --parallel",
-    "lint": "turbo run lint",
+    "install:expo": "cd apps/expo && npm install --prefix .",
+    "postinstall": "npm run install:expo && npm run db:generate",
+    "dev": "turbo dev --parallel",
+    "lint": "turbo lint",
     "lint:fix": "turbo lint:fix && manypkg fix",
-    "db-generate": "turbo db-generate",
-    "db-push": "turbo db-push"
-  },
-  "dependencies": {
-    "eslint": "^8.37.0",
-    "eslint-config-next": "^13.3.0",
-    "eslint-config-prettier": "^8.8.0",
-    "eslint-config-react": "^1.1.7",
-    "eslint-config-turbo": "^1.8.8",
-    "next": "^13.3.0"
+    "db:generate": "turbo db:generate",
+    "db:push": "turbo db:push"
   }
 }

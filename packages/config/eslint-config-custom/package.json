@@ -1,7 +1,10 @@
 {
   "name": "@soma/eslint-config",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
+  "scripts": {
+    "install:locally": "npm install"
+  },
   "dependencies": {
     "@types/eslint": "^8.37.0",
     "@typescript-eslint/eslint-plugin": "^5.57.1",
