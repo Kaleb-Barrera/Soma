@@ -1,23 +1,23 @@
 {
-  "name": "@soma/db",
-  "version": "1.0.1",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "license": "MIT",
-  "scripts": {
-    "install:locally": "npm install",
-    "clean": "rm -rf .turbo node_modules",
-    "dev": "npm run with-env prisma studio --port 5556",
-    "db:push": "npm run with-env prisma db push",
-    "db:generate": "npm run with-env prisma generate",
-    "with-env": "dotenv -e ../../.env -c --"
-  },
-  "dependencies": {
-    "@prisma/client": "^4.6.1"
-  },
-  "devDependencies": {
-    "dotenv-cli": "^6.0.0",
-    "prisma": "^4.6.1",
-    "typescript": "^4.9.3"
-  }
+    "name": "@soma/db",
+    "version": "1.0.1",
+    "main": "./index.ts",
+    "types": "./index.ts",
+    "license": "MIT",
+    "scripts": {
+        "install:locally": "npm install",
+        "clean": "rm -rf .turbo node_modules",
+        "studio": "npm run with-env prisma studio --port 5556",
+        "db:push": "npm run with-env prisma db push",
+        "db:generate": "npm run with-env prisma generate",
+        "with-env": "dotenv -e ../../.env -c --"
+    },
+    "dependencies": {
+        "@prisma/client": "^4.6.1"
+    },
+    "devDependencies": {
+        "dotenv-cli": "^6.0.0",
+        "prisma": "^4.6.1",
+        "typescript": "^4.9.3"
+    }
 }

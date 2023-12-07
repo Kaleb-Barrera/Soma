@@ -4,10 +4,11 @@ import * as React from "react";
 
 import Login from "./screens/login";
 import Home from "./screens/home";
+import Profile from "./screens/Profile";
+
 import { type RootStackParamList } from "./types/react-navigation";
 import { TRPCProvider } from "./utils/trpc";
 import { ClerkLoaded, SignedIn, SignedOut } from "@clerk/clerk-expo";
-import Profile from "./screens/Profile";
 
 export default function Layout() {
     return (
@@ -20,17 +21,11 @@ export default function Layout() {
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigator = () => {
-
     return (
         <ClerkLoaded>
             <SignedIn>
                 <TRPCProvider>
                     <Stack.Navigator>
-                        <Stack.Screen
-                            name="Home"
-                            component={Home}
-                            options={{ headerShown: false }}
-                        />
                         <Stack.Screen
                             name="Profile"
                             component={Profile}

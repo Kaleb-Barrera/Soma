@@ -3,7 +3,16 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
 
   otheme: {
-    extend: {},
+    extend: {
+    },
+  },
+  theme: {
+    extend: {
+      colors: {
+        "dark": "slate-950",
+        "light": "white"
+      }
+    }
   },
   plugins: [],
 };

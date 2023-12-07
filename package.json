@@ -19,5 +19,8 @@
     "lint:fix": "turbo lint:fix && manypkg fix",
     "db:generate": "turbo db:generate",
     "db:push": "turbo db:push"
+  },
+  "dependencies": {
+    "googleapis": "^118.0.0"
   }
 }

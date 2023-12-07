@@ -41,7 +41,10 @@ model Message {
 }
 
 model Group {
-    groupId String @id @default(cuid())
+    groupId   String @id @default(cuid())
+    groupName String
+
+    groupImage String
 
     owners       User[] @relation("OwnedGroups")
     participants User[] @relation("PartakenGroups")

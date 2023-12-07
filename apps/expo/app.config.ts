@@ -1,12 +1,13 @@
 import { ExpoConfig, ConfigContext } from "@expo/config";
 
-const CLERK_PUBLISHABLE_KEY = "pk_test_Y3VyaW91cy13cmVuLTg2LmNsZXJrLmFjY291bnRzLmRldiQ";
+import { config } from "dotenv";
+config()
 
 const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   name: "Soma",
   slug: "soma",
   scheme: "soma",
-  version: "1.0.0",
+  version: "0.0.2",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "light",
@@ -34,7 +35,8 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
     eas: {
       projectId: "68d174ce-4253-4e55-8bd9-8c7865fdf30d"
     },
-    CLERK_PUBLISHABLE_KEY,
+    CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
+    NEXT_URL: process.env.NEXT_URL,
   },
   owner: "an26k",
 })
