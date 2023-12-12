@@ -8,11 +8,11 @@
     "packages/*"
   ],
   "engines": {
-    "node": "^18.15.0"
+    "node": "^20.0"
   },
-  "packageManager": "npm@9.5.0",
+  "packageManager": "npm@10.2.3",
   "scripts": {
-    "install:expo": "cd apps/expo && npm install --prefix .",
+    "install:expo": "cd apps/expo && npm install --prefix . @expo/vector-icons",
     "postinstall": "npm run install:expo && npm run db:generate",
     "dev": "turbo dev --parallel",
     "lint": "turbo lint",

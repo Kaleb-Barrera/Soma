@@ -13,7 +13,7 @@
     "@trpc/client": "^10.18.0",
     "@trpc/server": "^10.18.0",
     "superjson": "1.9.1",
-    "zod": "^3.21.4"
+    "zod": ">=3.22.3"
   },
   "devDependencies": {
     "@soma/eslint-config": "^1.0.0",
