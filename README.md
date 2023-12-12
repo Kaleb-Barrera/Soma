@@ -104,7 +104,7 @@ Vamos a usar NextJS por sus habilidades de servidor dentro de la carpeta `nextjs
 Clona el proyecto usando el cliente de git en tu terminal de comandos:
 
 ```bash
-  git clone https://github.com/Kaleb-Barrera/Soma.git
+  git clone https://github.com/ashley-lizbeth/Soma.git
 ```
 
 Entra al directorio del proyecto:
@@ -113,8 +113,13 @@ Entra al directorio del proyecto:
   cd Soma
 ```
 
-Instala todos los paquetes el proyecto necesita, se va a tardara bastante:
+**ANTES DE INSTALAR** los paquetes, copia el archivo .env.example de la carpeta principal y el que esta dentro de `apps/expo` a .env
+```bash
+    cp .env.example .env
+    cp apps/expo/.env.example apps/expo/.env
+```
 
+Instala todos los paquetes el proyecto necesita:
 ```bash
   npm install
 ```
@@ -141,7 +146,7 @@ Si solo quieres empezar el servidor de NextJS, haz lo siguiente:
 
 ## Tech Stack
 
-Esta app usa una variación del [T3Stack by Theo3d](https://github.com/t3-oss/create-t3-turbo.git) para móviles:
+Esta app usa una variación del [T3Stack by Theo - t3.gg](https://github.com/t3-oss/create-t3-turbo.git) para móviles:
 
 **Cliente:** React Native, TailwindCSS mediante NativeWind, NextJS para página web
 
