@@ -21,6 +21,7 @@
     "db:push": "turbo db:push"
   },
   "dependencies": {
-    "googleapis": "^118.0.0"
+    "googleapis": "^118.0.0",
+    "turbo": "^1.11.0"
   }
 }
