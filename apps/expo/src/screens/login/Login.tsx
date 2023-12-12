@@ -14,13 +14,13 @@ export default function LoginScreen() {
 
     return (
         <SafeAreaView className="flex-1 bg-blue-700">
-            <View className="flex-1 justify-end mt-40 bg-light dark:bg-dark">
+            <View className="flex-1 justify-end mt-40 bg-white dark:bg-slate-800">
                 <Image source={require("../../../assets/soma-login.png")} resizeMode={"contain"} className="w-full h-auto" />
             </View>
-            <View className="flex-1 items-center bg-light dark:bg-dark">
+            <View className="flex-1 items-center bg-white dark:bg-slate-800">
                 <SignInWithGoogle />
             </View>
-            <View className="items-center pb-6 bg-light dark:bg-dark">
+            <View className="items-center pb-6 bg-white dark:bg-slate-800">
                 <TouchableOpacity onPress={toggleColorScheme}>
                     {
                         colorScheme === 'light'
