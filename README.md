@@ -104,44 +104,44 @@ Vamos a usar NextJS por sus habilidades de servidor dentro de la carpeta `nextjs
 Clona el proyecto usando el cliente de git en tu terminal de comandos:
 
 ```bash
-  git clone https://github.com/ashley-lizbeth/Soma.git
+git clone https://github.com/ashley-lizbeth/Soma.git
 ```
 
 Entra al directorio del proyecto:
 
 ```bash
-  cd Soma
+cd Soma
 ```
 
 **ANTES DE INSTALAR** los paquetes, copia el archivo .env.example de la carpeta principal y el que esta dentro de `apps/expo` a .env
 ```bash
-    cp .env.example .env
-    cp apps/expo/.env.example apps/expo/.env
+cp .env.example .env
+cp apps/expo/.env.example apps/expo/.env
 ```
 
 Instala todos los paquetes el proyecto necesita:
 ```bash
-  npm install
+npm install
 ```
 
 Comienza ambos servidores, el de Expo para celulares y el de NextJS para web. Este proceso consume mucha memoria, así que les recomiendo iniciarlos individaulmente
 
 ```bash
-  npm run dev
+npm run dev
 ```
 
 Si solo quieres empezar el servidor de la aplicacion móvil, entra a la carpeta `apps/expo` y corre `npm run dev`
 
 ```bash
-  cd apps/expo
-  npm run dev
+cd apps/expo
+npm run dev
 ```
 
 Si solo quieres empezar el servidor de NextJS, haz lo siguiente:
 
 ```bash
-  cd apps/nextjs
-  npm run dev
+cd apps/nextjs
+npm run dev
 ```
 
 ## Tech Stack
