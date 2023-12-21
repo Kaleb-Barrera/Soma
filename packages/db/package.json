@@ -10,14 +10,15 @@
         "studio": "npm run with-env prisma studio --port 5556",
         "db:push": "npm run with-env prisma db push",
         "db:generate": "npm run with-env prisma generate",
+        "db:migrate": "npm run with-env prisma migrate dev",
         "with-env": "dotenv -e ../../.env -c --"
     },
     "dependencies": {
-        "@prisma/client": "^4.6.1"
+        "@prisma/client": "^5.7.1"
     },
     "devDependencies": {
         "dotenv-cli": "^6.0.0",
-        "prisma": "^4.6.1",
+        "prisma": "^5.7.1",
         "typescript": "^4.9.3"
     }
 }

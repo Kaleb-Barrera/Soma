@@ -13,6 +13,9 @@
       ],
       "cache": false
     },
+    "db:migrate": {
+      "cache": false
+    },
     "build": {
       "dependsOn": [
         "^build",

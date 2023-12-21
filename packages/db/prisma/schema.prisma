@@ -19,25 +19,10 @@ model User {
     email        String
     lastLoggedIn DateTime @default(now())
 
-    ownedGroups    Group[] @relation("OwnedGroups")
-    partakenGroups Group[] @relation("PartakenGroups")
-}
-
-model Message {
-    messageId String @id @default(cuid())
-
-    authorName String
-    authorImg  String
-
-    groupId String
-    group   Group  @relation(fields: [groupId], references: [groupId])
-
-    content String
-
-    createdAt DateTime  @default(now())
-    updatedAt DateTime?
-
-    @@index([groupId])
+    teachesAt isTeacherAt[]
+    isStudentAt isStudentAt[]
+    
+    messages Message[]
 }
 
 model Group {
@@ -46,10 +31,64 @@ model Group {
 
     groupImage String
 
-    owners       User[] @relation("OwnedGroups")
-    participants User[] @relation("PartakenGroups")
+    createdAt DateTime @default(now())
 
-    messages Message[]
+    subgroups Subgroup[]
+
+    teachers isTeacherAt[]
+}
+
+model Subgroup {
+    subgroupId String @id
+    
+    group Group @relation(fields: [groupId], references: [groupId])
+    groupId String
+
+    students isStudentAt[]
 
     createdAt DateTime @default(now())
+
+    @@index([groupId])
+
 }
+
+model isTeacherAt{
+    user User @relation(fields: [userId], references: [userId])
+    userId String
+
+    group Group @relation(fields: [groupId], references: [groupId])
+    groupId String
+
+    @@id([userId, groupId])
+    @@index([userId])
+    @@index([groupId])
+}
+
+model isStudentAt {
+    user User @relation(fields: [userId], references: [userId])
+    userId String
+
+    subgroup Subgroup @relation(fields: [subgroupId], references: [subgroupId])
+    subgroupId String
+
+    @@id([userId, subgroupId])
+    @@index([userId])
+    @@index([subgroupId])
+}
+
+model Message {
+    messageId String @id @default(cuid())
+
+    author User @relation(fields: [authorId], references: [userId])
+    authorId String
+
+    groupId String
+
+    content String
+
+    createdAt DateTime  @default(now())
+    updatedAt DateTime?
+
+    @@index([authorId])
+}
+
