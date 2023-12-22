@@ -124,25 +124,32 @@ Instala todos los paquetes el proyecto necesita:
 npm install
 ```
 
-Comienza ambos servidores, el de Expo para celulares y el de NextJS para web. Este proceso consume mucha memoria, así que les recomiendo iniciarlos individaulmente
+Comienza ambos servidores. Si aun no has configurado Expo Go, saltate este paso
 
 ```bash
 npm run dev
 ```
 
-Si solo quieres empezar el servidor de la aplicacion móvil, entra a la carpeta `apps/expo` y corre `npm run dev`
+## Correr el proyecto
+
+En tu celular, instala la aplicación de Expo Go, disponible en Google Play.
+Primero, empieza el servidor de la aplicacion móvil entrando a la carpeta `apps/expo` y corriendo `npm run dev`
 
 ```bash
 cd apps/expo
 npm run dev
 ```
 
-Si solo quieres empezar el servidor de NextJS, haz lo siguiente:
+Una vez que este corriendo, **debes de presionar `s`** para cambiar del servidor Web al servidor de Expo Go.
+En tu celular, dale click a la opcion que dice "Scan QR Code" y apunta tu camara al codigo QR que aparece. Esto abrira tu navegador web, presiona la opcion en blanco, que dice Expo Go, y espera a que la aplicación compile.
+
+Una vez dentro, cierra el servidor, regresate al directorio principal, y comienza ambos servidores
 
 ```bash
-cd apps/nextjs
+cd ../..
 npm run dev
 ```
+Regresa a la aplicacion y reiniciala si es necesario. Ahora la aplicacion tendra en tu historial la aplicacion, asi que solo necesitas iniciar ambos servidores y presionar el link.
 
 ## Tech Stack
 
