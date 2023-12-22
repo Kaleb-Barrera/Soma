@@ -5,6 +5,7 @@ import type { AppRouter } from "@soma/api";
  * setting the baseUrl to your production API URL.
  */
 import Constants from "expo-constants";
+const {manifest2} = Constants
 /**
  * A wrapper for your app that provides the TRPC context.
  * Use only in app.tsx
@@ -26,7 +27,7 @@ const getBaseUrl = () => {
    * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
    * you don't have anything else running on it, or you'd have to change it.
    */
-  const host = Constants.manifest?.debuggerHost;
+  const host = Constants.expoConfig.hostUri
   if (!host)
     throw new Error("failed to get localhost, configure it manually");
 
