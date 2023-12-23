@@ -1,11 +1,9 @@
-import { authRouter } from "./router/auth";
-import { onStartupRouter } from "./router/onStartup";
+import { userConnectionsRouter } from "./router/userConnections";
 import { classroomRouter } from "./router/classroom"
 import { TRPCrouter } from "./trpc";
 
 export const appRouter = TRPCrouter({
-    onStartup: onStartupRouter,
-    auth: authRouter,
+    userConnections: userConnectionsRouter,
     classroom: classroomRouter,
 });
 
