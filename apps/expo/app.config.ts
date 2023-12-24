@@ -32,13 +32,9 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
     favicon: "./assets/favicon.png"
   },
   extra: {
-    eas: {
-      projectId: "68d174ce-4253-4e55-8bd9-8c7865fdf30d"
-    },
     CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
     NEXT_URL: process.env.NEXT_URL,
   },
-  owner: "an26k",
 })
 
 export default defineConfig
