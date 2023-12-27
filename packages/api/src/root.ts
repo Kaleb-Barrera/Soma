@@ -1,9 +1,9 @@
-import { userConnectionsRouter } from "./router/userConnections";
+import { userRouter } from "./router/user";
 import { classroomRouter } from "./router/classroom"
 import { TRPCrouter } from "./trpc";
 
 export const appRouter = TRPCrouter({
-    userConnections: userConnectionsRouter,
+    userConnections: userRouter,
     classroom: classroomRouter,
 });
 
