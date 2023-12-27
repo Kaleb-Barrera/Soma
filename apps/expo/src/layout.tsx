@@ -6,14 +6,14 @@ import Login from "./screens/login";
 import Home from "./screens/home";
 import Profile from "./screens/Profile";
 
-import { type RootStackParamList } from "./types/react-navigation";
+import { type RootStackParamList } from "./types/reactNavigationParams";
 import { TRPCProvider } from "./utils/trpc";
 import { ClerkLoaded, SignedIn, SignedOut } from "@clerk/clerk-expo";
 
 export default function Layout() {
     return (
         <NavigationContainer>
-            <RootNavigator />
+            <RootNavigator/>
         </NavigationContainer>
     );
 }
@@ -26,6 +26,11 @@ const RootNavigator = () => {
             <SignedIn>
                 <TRPCProvider>
                     <Stack.Navigator>
+                        <Stack.Screen
+                            name="Home"
+                            component={Home}
+                            options={{ headerShown: false}}
+                        />
                         <Stack.Screen
                             name="Profile"
                             component={Profile}

@@ -2,50 +2,41 @@ import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { View, Text, Button, TextInput } from "react-native";
 
-import type { RootStackScreenProps } from "../../types/react-navigation";
+import { useSetupResources } from "../../hooks/useSetupResources";
+import { useGetAllGroups } from "../../hooks/databaseHooks";
 
-import { trpc } from "../../utils/trpc";
+import type { RootStackScreenProps } from "../../types/reactNavigationParams";
+
 import GroupPreview from "./components/GroupPreview";
 
 export default function Home({ navigation }: RootStackScreenProps<"Home">) {
-    const { isLoading, isError, error, data } = trpc.onStartup.getAllGroups.useQuery();
+    const {userObjectAvailable, groupsAndRolesUpdated, newUsersSaved} = useSetupResources() 
+    const groups = useGetAllGroups()
 
-    if (isLoading) {
-        return (
-            <View className="flex-1 justify-center items-center">
-                <Text className="text-4xl">
-                    ...
-                </Text>
-            </View>
-        )
-    }
-
-    if (isError) {
-        return (
-            <View className="flex-1 justify-center items-center bg-red-700">
-                <Text className="text-white mx-5">
-                    Hubo un problema al cargar tus grupos, reinicia la aplicación
-                </Text>
-                <Text>
-                    {error.data}
-                </Text>
-                <Text>
-                    {error.shape}
-                </Text>
-                <Text>
-                    {error.message}
-                </Text>
-            </View>
-        )
-    }
-
-    const allGroups = data.ownedGroups.concat(data.partakenGroups).sort();
-    console.log(allGroups)
     return (
         <SafeAreaView className="flex-1 bg-light dark:bg-dark">
-            <View>
+            <View className="flex-1 justify-center items-center bg-white">
                 {
-                    allGroups.map(group => (<GroupPreview groupName={group.groupName} groupImage={group.groupImage} groupId={group.groupId} createdAt={group.createdAt} />))
+                    !newUsersSaved  ? (<Text>Actualizando datos...</Text>) : (<></>)
+                }
+                {
+                    userObjectAvailable ? (
+                        <Button title="Ir a perfil" onPress={() => {navigation.push("Profile")}}/>
+                    ) : <></>
+                }
+                {
+                    !groups.data 
+                    ? (<Text>Cargando grupos locales...</Text>) 
+                    : groups.data.length === 0
+                        ? groupsAndRolesUpdated 
+                            ? (
+                                <>
+                                    <Text>No se encontro ningun grupo</Text>
+                                    <Button title="Actualizar grupos" onPress={() => groups.refetch()}></Button>
+                                </>
+                              )
+                            : (<Text>Consultando la base de datos...</Text>) 
+                        : groups.data.map(group => (<GroupPreview {...group}></GroupPreview>))
                 }
             </View>
         </SafeAreaView>

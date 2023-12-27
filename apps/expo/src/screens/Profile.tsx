@@ -1,34 +1,22 @@
-import * as React from "react";
-import { Text, View, Image } from "react-native";
-import { useUser } from "@clerk/clerk-expo";
-// import { type RootStackScreenProps } from "../types/react-navigation";
+import {useContext} from "react";
+import { Text, View, Image, Button } from "react-native";
 
+import { useAppContext } from "../utils/AppContext";
 import SignOutButton from "../components/SignOutButton";
 
+import type { RootStackScreenProps } from "../types/reactNavigationParams";
+
 //{ navigation }: RootStackScreenProps<"Profile">
-export default function Profile() {
-  // const { getToken } = useAuth();
-  const { user } = useUser();
+export default function Profile({ navigation }: RootStackScreenProps<"Profile">) {
+  const {user} = useAppContext()
 
-  if (user === null) return <View />
-
-  // const [sessionToken, setSessionToken] = React.useState("");
-
-
-  //   React.useEffect(() => {
-  //     const scheduler = setInterval(async () => {
-  //       const token = await getToken();
-  //       setSessionToken(token as string);
-  //     }, 1000);
-  //
-  //     return () => clearInterval(scheduler);
-  //   }, []);
-  //
   return (
     <View className="flex-1 justify-center items-center bg-white">
       <Text className="text-3xl font-bold">Hola {user.firstName}!</Text>
-      <Image source={{ uri: user.profileImageUrl }} className="w-40 h-40 rounded-full" />
+      <Image source={{ uri: user.profileImg }} className="w-40 h-40 rounded-full" />
+      <Text>{user.email}</Text>
       <SignOutButton />
+      <Button title="Regresar" onPress={() => {navigation.pop()}}/>
     </View>
   );
 }
