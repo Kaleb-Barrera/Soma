@@ -8,8 +8,8 @@
         "build": "npm run with-env next build",
         "start": "npm run with-env next dev",
         "clean": "rm -rf .next .turbo node_modules",
-        "lint": "next lint",
-        "lint:fix": "npm run lint --fix",
+        "lint": "npm run with-env next lint",
+        "lint:fix": "npm run with-env npm run lint --fix",
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
