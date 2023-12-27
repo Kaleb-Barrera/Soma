@@ -5,6 +5,7 @@ module.exports = {
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
         "prettier",
+        "plugin:react-hooks/recommended",
     ],
     rules: {
         "@next/next/no-html-link-for-pages": "off",
