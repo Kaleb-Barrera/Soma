@@ -79,25 +79,15 @@ Vamos a usar NextJS por sus habilidades de servidor dentro de la carpeta `nextjs
 - PlanetScale. Un servicio de base de datos que usa MySQL. Todavia no nos conectamos porque no tenemos listo el servidor.
 - Clerk. Es un servicio de autenticacion que maneja el estado del usuario y su información, ya lo tengo conectado y funcionado en la aplicación móvil.
 
-## ¿Que hay por hacer?
-
-- Decorar la pantalla de Login y el botón de Google
-
-- Mejorar el flujo de autenticación para que no pregunte a si deseas salir de la aplicacion ni del navegador.
-
-- Añadir la pantalla de todos los chats y del chat individual
-
-- Integrar con Classroom via nuestro servicio de Google OAuth que ya cree.
-
-- Añadir la página web que los rediriga hacia las futuras paǵinas de la PlayStore y Apple Store.
-
-- Crear el servidor en NextJS usando tRCP
-
-- Configurar la conexión entre el cliente y el servidor.
-
-- Configurar el servidor para que se conecte con PlanetScale.
-
-- Crear las funciones que permitan acceder a los chats y los mensajes.
+## TO-DO
+- [ ] Crear una mejor marca
+- [ ] Decorar la pantalla de Login
+- [ ] Mejorar el flujo de autenticación para que no pueda entrar sin aceptar todos los campos
+- [ ] Cambiar el servidor de NextJS a Express
+- [ ] Integrar con Classroom
+- [ ] Añadir la pantalla de todos los chats y del chat individual
+- [ ] Crear las funciones que permitan acceder a los chats y los mensajes
+- [ ] Añadir la página web que los rediriga hacia las futuras paǵinas de la PlayStore y Apple Store
 
 ## Como instalar
 
@@ -140,8 +130,7 @@ cd apps/expo
 npm run dev
 ```
 
-Una vez que este corriendo, **debes de presionar `s`** para cambiar del servidor Web al servidor de Expo Go.
-En tu celular, dale click a la opcion que dice "Scan QR Code" y apunta tu camara al codigo QR que aparece. Esto abrira tu navegador web, presiona la opcion en blanco, que dice Expo Go, y espera a que la aplicación compile.
+Una vez que este corriendo, abre la aplicación de Expo Go en tu celular y dale click a la opcion que dice "Scan QR Code" y apunta tu camara al codigo QR que aparece. Esto abrira tu navegador web, presiona la opcion en blanco, que dice Expo Go, y espera a que la aplicación compile.
 
 Una vez dentro, cierra el servidor, regresate al directorio principal, y comienza ambos servidores
 
@@ -153,7 +142,7 @@ Regresa a la aplicacion y reiniciala si es necesario. Ahora la aplicacion tendra
 
 ## Tech Stack
 
-Esta app usa una variación del [T3Stack by Theo - t3.gg](https://github.com/t3-oss/create-t3-turbo.git) para móviles:
+Esta app usa fue inspirada por el [T3Stack by Theo - t3.gg](https://github.com/t3-oss/create-t3-turbo.git), y usa:
 
 **Cliente:** React Native, TailwindCSS mediante NativeWind, NextJS para página web
 
