@@ -3,7 +3,7 @@ import { classroomRouter } from "./router/classroom"
 import { TRPCrouter } from "./trpc";
 
 export const appRouter = TRPCrouter({
-    userConnections: userRouter,
+    user: userRouter,
     classroom: classroomRouter,
 });
 

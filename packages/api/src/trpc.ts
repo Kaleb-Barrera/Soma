@@ -1,22 +1,10 @@
-/**
- * YOU PROBABLY DON'T NEED TO EDIT THIS FILE, UNLESS:
- * 1. You want to modify request context (see Part 1)
- * 2. You want to create a new middleware or type of procedure (see Part 3)
- *
- * tl;dr - this is where all the tRPC server stuff is created and plugged in.
- * The pieces you will need to use are documented accordingly near the end
- */
 import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateNextContextOptions } from "@trpc/server/adapters/next";
+import { type CreateExpressContextOptions } from "@trpc/server/adapters/express";
 import superjson from "superjson";
 import { ZodError } from "zod";
 
 import { prisma } from "@soma/db";
-import { getAuth } from "@clerk/nextjs/server";
-import type {
-  SignedInAuthObject,
-  SignedOutAuthObject,
-} from "@clerk/nextjs/api";
+import type { AuthObject } from "@clerk/clerk-sdk-node";
 
 /**
  * 1. CONTEXT
@@ -27,36 +15,53 @@ import type {
  * processing a request
  *
  */
-type AuthContextProps = {
-  auth: SignedInAuthObject | SignedOutAuthObject;
-};
+
+type BaseRequest = CreateExpressContextOptions['req']
+
+interface RequestWithAuth extends BaseRequest {
+  auth: AuthObject
+}
+
+interface ContextWithAuth extends CreateExpressContextOptions {
+  req: RequestWithAuth
+}
 
 /**
  * This helper generates the "internals" for a tRPC context. If you need to use
  * it, you can export it from here
  *
  * Examples of things you may need it for:
- * - testing, so we dont have to mock Next.js' req/res
+ * - testing, so we dont have to mock req/res
  * - trpc's `createSSGHelpers` where we don't have req/res
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 
-const createInnerTRPCContext = async ({ auth }: AuthContextProps) => {
+const createInnerTRPCContext = async (auth: AuthObject) => {
   return {
     auth,
     prisma
   }
 };
 
+const hasAuth = (x: any): x is RequestWithAuth => x.auth ?? false
+
+function getAuth(req: BaseRequest | ContextWithAuth){
+  if(!hasAuth(req)){
+    throw new TRPCError({code: "BAD_REQUEST", message: "Auth object not found in request body"})
+  }
+  return req.auth
+}
+
 /**
  * This is the actual context you'll use in your router. It will be used to
  * process every request that goes through your tRPC endpoint
  * @link https://trpc.io/docs/context
  */
-export const createTRPCContext = async (opts: CreateNextContextOptions) => {
-  return await createInnerTRPCContext({
-    auth: getAuth(opts.req)
-  });
+
+export const createTRPCContext = async ({req, res}: CreateExpressContextOptions | ContextWithAuth) => {
+  return await createInnerTRPCContext(
+    getAuth(req)
+  );
 };
 
 /**
@@ -65,7 +70,8 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-const t = initTRPC.context<typeof createTRPCContext>().create({
+type Context = Awaited<ReturnType<typeof createTRPCContext>>
+const t = initTRPC.context<Context>().create({
   transformer: superjson,
   errorFormatter({ shape, error }) {
     return {

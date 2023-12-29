@@ -28,6 +28,8 @@ const getBaseUrl = () => {
    * you don't have anything else running on it, or you'd have to change it.
    */
   const host = Constants.expoConfig.hostUri
+  console.log({host});
+  
   if (!host)
     throw new Error("failed to get localhost, configure it manually");
 

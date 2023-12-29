@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { TRPCrouter, protectedProcedure } from "../trpc";
+import { TRPCrouter, protectedProcedure, publicProcedure } from "../trpc";
 import { User } from "@soma/db";
 
 export const userRouter = TRPCrouter({
