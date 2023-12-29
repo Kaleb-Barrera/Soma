@@ -1,0 +1,28 @@
+
+
+name: CI - Scan of the security
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Delete some files
+        run: |
+          pwd
+          ls
+          rm -f README.md
+          ls
+
+#      - name: Upload via FTP
+#        uses: airvzxf/ftp-deployment-action@latest
+#        with:
+#          server: ${{ secrets.FTP_SERVER }}
+#          user: ${{ secrets.FTP_USERNAME }}
+#          password: ${{ secrets.FTP_PASSWORD }}
+#          local_dir: "./release/latest/"
+#          delete: "true"
