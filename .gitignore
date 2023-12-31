@@ -12,10 +12,6 @@ coverage
 db.sqlite
 db.sqlite-journal
 
-# next.js
-.next/
-out/
-
 # expo
 .expo/
 dist/
