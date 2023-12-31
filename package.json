@@ -1,28 +1,32 @@
 {
-  "name": "soma",
-  "private": true,
-  "version": "0.0.1",
-  "workspaces": [
-    "apps/*",
-    "packages/config/*",
-    "packages/*"
-  ],
-  "engines": {
-    "node": "^20.0"
-  },
-  "packageManager": "npm@10.2.3",
-  "scripts": {
-    "install:expo": "cd apps/expo && npm install --prefix . @expo/vector-icons",
-    "postinstall": "npm run install:expo && npm run db:generate",
-    "dev": "turbo dev --parallel",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint:fix && manypkg fix",
-    "db:generate": "turbo db:generate",
-    "db:push": "turbo db:push",
-    "db:migrate": "turbo db:migrate"
-  },
-  "dependencies": {
-    "googleapis": "^118.0.0",
-    "turbo": "^1.11.0"
-  }
+    "name": "soma",
+    "private": true,
+    "version": "0.0.1",
+    "workspaces": [
+        "apps/*",
+        "packages/config/*",
+        "packages/*"
+    ],
+    "engines": {
+        "node": "^20.0"
+    },
+    "packageManager": "npm@10.2.3",
+    "scripts": {
+        "install:expo": "cd apps/expo && npm install --prefix . @expo/vector-icons",
+        "postinstall": "npm run install:expo && npm run db:generate",
+        "dev": "turbo dev --parallel",
+        "lint": "turbo lint",
+        "lint:fix": "turbo lint:fix",
+        "format": "prettier . --write",
+        "db:generate": "turbo db:generate",
+        "db:push": "turbo db:push",
+        "db:migrate": "turbo db:migrate"
+    },
+    "dependencies": {
+        "googleapis": "^118.0.0",
+        "turbo": "^1.11.0"
+    },
+    "devDependencies": {
+        "prettier": "^3.1.1"
+    }
 }
