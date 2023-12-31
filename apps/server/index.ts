@@ -12,11 +12,13 @@ app.use(cors({
     credentials: true
 }))
 app.use(express.json())
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
 app.use(ClerkExpressWithAuth())
 
 app.use(
     '/api/trpc',
     createExpressMiddleware({
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         router: appRouter,
         createContext
