@@ -9,13 +9,13 @@
 # the `language` matrix defined below to confirm you have the correct set of
 # supported CodeQL languages.
 #
-name: 'CodeQL'
+name: 'CI - CodeQL'
 
 on:
-    push:
-        branches: ['main']
-    pull_request:
-        branches: ['main']
+    workflow_run:
+        workflows: ['CI - ESlint']
+        types:
+            - completed
     workflow_dispatch:
     # schedule:
     # - cron: '45 23 * * 2'
