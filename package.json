@@ -12,7 +12,7 @@
     },
     "packageManager": "npm@10.2.3",
     "scripts": {
-        "install:expo": "cd apps/expo && npm install --prefix . @expo/vector-icons",
+        "install:expo": "cd apps/expo && npm run install:locally @expo/vector-icons",
         "postinstall": "npm run install:expo && npm run db:generate",
         "dev": "turbo dev --parallel",
         "lint": "turbo lint",
