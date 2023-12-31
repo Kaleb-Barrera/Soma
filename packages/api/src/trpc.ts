@@ -1,10 +1,10 @@
-import { TRPCError, initTRPC } from "@trpc/server";
-import { type CreateExpressContextOptions } from "@trpc/server/adapters/express";
-import superjson from "superjson";
-import { ZodError } from "zod";
+import { TRPCError, initTRPC } from '@trpc/server';
+import { type CreateExpressContextOptions } from '@trpc/server/adapters/express';
+import superjson from 'superjson';
+import { ZodError } from 'zod';
 
-import { prisma } from "@soma/db";
-import type { AuthObject } from "@clerk/clerk-sdk-node";
+import { prisma } from '@soma/db';
+import type { AuthObject } from '@clerk/clerk-sdk-node';
 
 /**
  * 1. CONTEXT
@@ -16,14 +16,14 @@ import type { AuthObject } from "@clerk/clerk-sdk-node";
  *
  */
 
-type BaseRequest = CreateExpressContextOptions['req']
+type BaseRequest = CreateExpressContextOptions['req'];
 
 interface RequestWithAuth extends BaseRequest {
-  auth: AuthObject
+    auth: AuthObject;
 }
 
 interface ContextWithAuth extends CreateExpressContextOptions {
-  req: RequestWithAuth
+    req: RequestWithAuth;
 }
 
 /**
@@ -37,19 +37,22 @@ interface ContextWithAuth extends CreateExpressContextOptions {
  */
 
 const createInnerTRPCContext = (auth: AuthObject) => {
-  return {
-    auth,
-    prisma
-  }
+    return {
+        auth,
+        prisma,
+    };
 };
 
-const hasAuth = (x: unknown): x is RequestWithAuth => !!x.auth
+const hasAuth = (x: unknown): x is RequestWithAuth => !!x.auth;
 
-function getAuth(req: BaseRequest | ContextWithAuth){
-  if(!hasAuth(req)){
-    throw new TRPCError({code: "BAD_REQUEST", message: "Auth object not found in request body"})
-  }
-  return req.auth
+function getAuth(req: BaseRequest | ContextWithAuth) {
+    if (!hasAuth(req)) {
+        throw new TRPCError({
+            code: 'BAD_REQUEST',
+            message: 'Auth object not found in request body',
+        });
+    }
+    return req.auth;
 }
 
 /**
@@ -58,10 +61,10 @@ function getAuth(req: BaseRequest | ContextWithAuth){
  * @link https://trpc.io/docs/context
  */
 
-export const createTRPCContext = ({req}: CreateExpressContextOptions | ContextWithAuth) => {
-  return createInnerTRPCContext(
-    getAuth(req)
-  );
+export const createTRPCContext = ({
+    req,
+}: CreateExpressContextOptions | ContextWithAuth) => {
+    return createInnerTRPCContext(getAuth(req));
 };
 
 /**
@@ -70,19 +73,21 @@ export const createTRPCContext = ({req}: CreateExpressContextOptions | ContextWi
  * This is where the trpc api is initialized, connecting the context and
  * transformer
  */
-type Context = Awaited<ReturnType<typeof createTRPCContext>>
+type Context = Awaited<ReturnType<typeof createTRPCContext>>;
 const t = initTRPC.context<Context>().create({
-  transformer: superjson,
-  errorFormatter({ shape, error }) {
-    return {
-      ...shape,
-      data: {
-        ...shape.data,
-        zodError:
-          error.cause instanceof ZodError ? error.cause.flatten() : null,
-      },
-    };
-  },
+    transformer: superjson,
+    errorFormatter({ shape, error }) {
+        return {
+            ...shape,
+            data: {
+                ...shape.data,
+                zodError:
+                    error.cause instanceof ZodError
+                        ? error.cause.flatten()
+                        : null,
+            },
+        };
+    },
 });
 
 /**
@@ -112,14 +117,17 @@ export const publicProcedure = t.procedure;
  * procedure
  */
 const enforceUserIsAuthed = t.middleware(({ ctx, next }) => {
-  if (!ctx.auth.userId) {
-    throw new TRPCError({ code: "UNAUTHORIZED", message: "Not authenticated" });
-  }
-  return next({
-    ctx: {
-      auth: ctx.auth,
-    },
-  });
+    if (!ctx.auth.userId) {
+        throw new TRPCError({
+            code: 'UNAUTHORIZED',
+            message: 'Not authenticated',
+        });
+    }
+    return next({
+        ctx: {
+            auth: ctx.auth,
+        },
+    });
 });
 
 /**

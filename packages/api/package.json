@@ -1,24 +1,24 @@
 {
-  "name": "@soma/api",
-  "version": "1.0.2",
-  "main": "./index.ts",
-  "types": "./index.ts",
-  "scripts": {
-    "clean": "rm -rf .turbo node_modules",
-    "lint": "eslint .",
-    "lint:fix": "eslint --fix ."
-  },
-  "dependencies": {
-    "@clerk/clerk-sdk-node": "^4.13.4",
-    "@soma/db": "^1.0.0",
-    "@trpc/client": "^10.18.0",
-    "@trpc/server": "^10.18.0",
-    "superjson": "1.9.1",
-    "zod": ">=3.22.3"
-  },
-  "devDependencies": {
-    "@soma/eslint-config": "^1.0.0",
-    "eslint": "^8.37.0",
-    "typescript": "^5.0.3"
-  }
+    "name": "@soma/api",
+    "version": "1.0.2",
+    "main": "./index.ts",
+    "types": "./index.ts",
+    "scripts": {
+        "clean": "rm -rf .turbo node_modules",
+        "lint": "eslint .",
+        "lint:fix": "eslint --fix ."
+    },
+    "dependencies": {
+        "@clerk/clerk-sdk-node": "^4.13.4",
+        "@soma/db": "^1.0.0",
+        "@trpc/client": "^10.18.0",
+        "@trpc/server": "^10.18.0",
+        "superjson": "1.9.1",
+        "zod": ">=3.22.3"
+    },
+    "devDependencies": {
+        "@soma/eslint-config": "^1.0.0",
+        "eslint": "^8.37.0",
+        "typescript": "^5.0.3"
+    }
 }

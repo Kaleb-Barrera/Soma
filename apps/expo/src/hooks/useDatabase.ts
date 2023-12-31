@@ -1,55 +1,70 @@
-import * as SQLite from 'expo-sqlite'
-import { type ColumnMapping, columnTypes, type IStatement, Migrations, Repository, sql } from 'expo-sqlite-orm'
-import { useMemo, useState, useEffect } from 'react'
+import * as SQLite from 'expo-sqlite';
+import {
+    type ColumnMapping,
+    columnTypes,
+    type IStatement,
+    Migrations,
+    Repository,
+    sql,
+} from 'expo-sqlite-orm';
+import { useMemo, useState, useEffect } from 'react';
 
 /*
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing'
 */
 
-import type Database from '../types/database'
-import type { User, Group, Subgroup, isTeacherAt, isStudentAt, isOwnerOf, Message } from "@soma/db"
+import type Database from '../types/database';
+import type {
+    User,
+    Group,
+    Subgroup,
+    isTeacherAt,
+    isStudentAt,
+    isOwnerOf,
+    Message,
+} from '@soma/db';
 
 const userColumMapping: ColumnMapping<User> = {
-  userId: { type: columnTypes.TEXT },
-  profileImg: { type: columnTypes.TEXT, default: null },
-  firstName: { type: columnTypes.TEXT },
-  lastName: { type: columnTypes.TEXT, default: null },
-  gender: { type: columnTypes.TEXT, default: null },
-  email: { type: columnTypes.TEXT, default: null,  },
-  lastLoggedIn: { type: columnTypes.INTEGER, default: () => Date.now() },
-}
+    userId: { type: columnTypes.TEXT },
+    profileImg: { type: columnTypes.TEXT, default: null },
+    firstName: { type: columnTypes.TEXT },
+    lastName: { type: columnTypes.TEXT, default: null },
+    gender: { type: columnTypes.TEXT, default: null },
+    email: { type: columnTypes.TEXT, default: null },
+    lastLoggedIn: { type: columnTypes.INTEGER, default: () => Date.now() },
+};
 
 const groupColumnMapping: ColumnMapping<Group> = {
     groupId: { type: columnTypes.TEXT },
     groupName: { type: columnTypes.TEXT },
     groupDescription: { type: columnTypes.TEXT, default: null },
     groupImage: { type: columnTypes.TEXT, default: null },
-    createdAt: {type: columnTypes.INTEGER, default: () => Date.now() }
-}
+    createdAt: { type: columnTypes.INTEGER, default: () => Date.now() },
+};
 
 const subgroupColumnMapping: ColumnMapping<Subgroup> = {
     groupId: { type: columnTypes.TEXT },
     subgroupId: { type: columnTypes.TEXT },
-    createdAt: {type: columnTypes.INTEGER, default: () => Date.now() }
-}
+    createdAt: { type: columnTypes.INTEGER, default: () => Date.now() },
+};
 
 const isTeacherAtColumnMapping: ColumnMapping<isTeacherAt> = {
     groupId: { type: columnTypes.TEXT },
     userId: { type: columnTypes.TEXT },
-}
+};
 
 const isStudentAtColumnMapping: ColumnMapping<isStudentAt> = {
     groupId: { type: columnTypes.TEXT },
     subgroupId: { type: columnTypes.TEXT },
     userId: { type: columnTypes.TEXT },
-}
+};
 
 const isOwnerOfColumnMapping: ColumnMapping<isOwnerOf> = {
     groupId: { type: columnTypes.TEXT },
     subgroupId: { type: columnTypes.TEXT },
     userId: { type: columnTypes.TEXT },
-}
+};
 
 const messageColumnMapping: ColumnMapping<Message> = {
     messageId: { type: columnTypes.TEXT },
@@ -59,7 +74,7 @@ const messageColumnMapping: ColumnMapping<Message> = {
     content: { type: columnTypes.TEXT },
     createdAt: { type: columnTypes.INTEGER, default: () => Date.now() },
     updatedAt: { type: columnTypes.INTEGER, default: null },
-}
+};
 
 const statements: IStatement = {
     '0001_create_user': sql`
@@ -132,69 +147,84 @@ const statements: IStatement = {
         CREATE INDEX "isStudentAt_userId_idx" ON "isStudentAt"("userId");
         CREATE INDEX "isStudentAt_groupId_subgroupId_idx" ON "isStudentAt"("groupId", "subgroupId");
         CREATE INDEX "Message_groupId_subgroupId_idx" ON "Message"("groupId", "subgroupId")
-        ;`
-}
+        ;`,
+};
 
-const databaseName = 'soma'
+const databaseName = 'soma';
 
 interface Data {
-    isMigrating: boolean,
-    isAvailable: boolean,
-    database: Database
+    isMigrating: boolean;
+    isAvailable: boolean;
+    database: Database;
 }
 
 export function useDatabase() {
-    const migrations = useMemo(() => new Migrations(databaseName, statements), [])
+    const migrations = useMemo(
+        () => new Migrations(databaseName, statements),
+        [],
+    );
 
     const userRepo = useMemo(() => {
-        return new Repository(databaseName, 'User', userColumMapping)
-    }, [])
+        return new Repository(databaseName, 'User', userColumMapping);
+    }, []);
 
     const groupRepo = useMemo(() => {
-        return new Repository(databaseName, 'Group', groupColumnMapping)
-    }, [])
+        return new Repository(databaseName, 'Group', groupColumnMapping);
+    }, []);
 
     const subgroupRepo = useMemo(() => {
-        return new Repository(databaseName, 'Subgroup', subgroupColumnMapping)
-    }, [])
+        return new Repository(databaseName, 'Subgroup', subgroupColumnMapping);
+    }, []);
 
     const isTeacherAtRepo = useMemo(() => {
-        return new Repository(databaseName, 'isTeacherAt', isTeacherAtColumnMapping)
-    }, [])
+        return new Repository(
+            databaseName,
+            'isTeacherAt',
+            isTeacherAtColumnMapping,
+        );
+    }, []);
 
     const isStudentAtRepo = useMemo(() => {
-        return new Repository(databaseName, 'isStudentAt', isStudentAtColumnMapping)
-    }, [])
+        return new Repository(
+            databaseName,
+            'isStudentAt',
+            isStudentAtColumnMapping,
+        );
+    }, []);
 
     const isOwnerOfRepo = useMemo(() => {
-        return new Repository(databaseName, 'isOwnerOf', isOwnerOfColumnMapping)
-    }, [])
+        return new Repository(
+            databaseName,
+            'isOwnerOf',
+            isOwnerOfColumnMapping,
+        );
+    }, []);
 
     const messageRepo = useMemo(() => {
-        return new Repository(databaseName, 'Message', messageColumnMapping)
-    }, [])
+        return new Repository(databaseName, 'Message', messageColumnMapping);
+    }, []);
 
     const [data, setData] = useState<Data>({
-        isMigrating: true, 
-        isAvailable: false, 
+        isMigrating: true,
+        isAvailable: false,
         database: {
             databaseLayer: null,
-            user: null, 
-            group: null, 
-            subgroup: null, 
-            message: null, 
-            isTeacherAt: null, 
-            isStudentAt: null, 
-            isOwnerOf: null
-        }
-    })
+            user: null,
+            group: null,
+            subgroup: null,
+            message: null,
+            isTeacherAt: null,
+            isStudentAt: null,
+            isOwnerOf: null,
+        },
+    });
 
     useEffect(() => {
         async function setupDatabase() {
             /* This is for resetting the database file
             FileSystem.deleteAsync(FileSystem.documentDirectory + 'SQLite/soma')
             */
-            await migrations.migrate()
+            await migrations.migrate();
             /* Uncomment this if you need access to the database
             await Sharing.shareAsync(
                 FileSystem.documentDirectory + 'SQLite/soma', 
@@ -209,7 +239,7 @@ export function useDatabase() {
                 database: {
                     databaseLayer: {
                         rawAccess: SQLite.openDatabase(databaseName),
-                        executeSql: executeSql
+                        executeSql: executeSql,
                     },
                     user: userRepo,
                     group: groupRepo,
@@ -217,24 +247,42 @@ export function useDatabase() {
                     message: messageRepo,
                     isTeacherAt: isTeacherAtRepo,
                     isStudentAt: isStudentAtRepo,
-                    isOwnerOf: isOwnerOfRepo
-                }
-            })
+                    isOwnerOf: isOwnerOfRepo,
+                },
+            });
         }
 
-        void setupDatabase()
-    }, [groupRepo, isOwnerOfRepo, isStudentAtRepo, isTeacherAtRepo, messageRepo, migrations, subgroupRepo, userRepo])
+        void setupDatabase();
+    }, [
+        groupRepo,
+        isOwnerOfRepo,
+        isStudentAtRepo,
+        isTeacherAtRepo,
+        messageRepo,
+        migrations,
+        subgroupRepo,
+        userRepo,
+    ]);
 
-  return data
+    return data;
 }
 
-function executeSql(sql: string, params: (string|number)[] = [], db = SQLite.openDatabase(databaseName)): unknown[] {
-    let result = []
-    db.transaction(tx => 
-        tx.executeSql(sql, params, (_txObj, {rows}) => result = rows._array as unknown[]),
+function executeSql(
+    sql: string,
+    params: (string | number)[] = [],
+    db = SQLite.openDatabase(databaseName),
+): unknown[] {
+    let result = [];
+    db.transaction(
+        (tx) =>
+            tx.executeSql(
+                sql,
+                params,
+                (_txObj, { rows }) => (result = rows._array as unknown[]),
+            ),
         (error) => {
-            throw new Error(error.message)
-        }
-    )
-    return result
+            throw new Error(error.message);
+        },
+    );
+    return result;
 }

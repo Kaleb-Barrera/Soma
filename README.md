@@ -42,11 +42,11 @@ packages
 
 Primeramente, usen Javascript un poco para que aprendan como funciona, deben de aprender:
 
-- ES6 sintaxis
-- Objetos
-- Promesas y las palabras clave `async await`
-- Operadores ternarios `? :`
-- Las funciones `.map() .filter() .reduce()`
+-   ES6 sintaxis
+-   Objetos
+-   Promesas y las palabras clave `async await`
+-   Operadores ternarios `? :`
+-   Las funciones `.map() .filter() .reduce()`
 
 Después, consulten tutoriales de React en sí, pueden ser de Youtube, les recomiendo este video: . Después de eso, ya por fin consulten como funciona React Native y hagan un proyecto personal, haganlo con la opcion que dice **EXPO**, y abranlo con la app Expo Go de la PlayStore.
 
@@ -74,20 +74,21 @@ Vamos a usar NextJS por sus habilidades de servidor dentro de la carpeta `nextjs
 
 #### Servicios web
 
-- Expo. Vamos a usar la pagina de Expo para distribuir la aplicación de manera automática a la PlayStore y Apple Store.
-- Vercel. Para servir la página de NextJS y sus funciones de servidor.
-- PlanetScale. Un servicio de base de datos que usa MySQL. Todavia no nos conectamos porque no tenemos listo el servidor.
-- Clerk. Es un servicio de autenticacion que maneja el estado del usuario y su información, ya lo tengo conectado y funcionado en la aplicación móvil.
+-   Expo. Vamos a usar la pagina de Expo para distribuir la aplicación de manera automática a la PlayStore y Apple Store.
+-   Vercel. Para servir la página de NextJS y sus funciones de servidor.
+-   PlanetScale. Un servicio de base de datos que usa MySQL. Todavia no nos conectamos porque no tenemos listo el servidor.
+-   Clerk. Es un servicio de autenticacion que maneja el estado del usuario y su información, ya lo tengo conectado y funcionado en la aplicación móvil.
 
 ## TO-DO
-- [ ] Crear una mejor marca
-- [ ] Decorar la pantalla de Login
-- [ ] Mejorar el flujo de autenticación para que no pueda entrar sin aceptar todos los campos
-- [ ] Cambiar el servidor de NextJS a Express
-- [ ] Integrar con Classroom
-- [ ] Añadir la pantalla de todos los chats y del chat individual
-- [ ] Crear las funciones que permitan acceder a los chats y los mensajes
-- [ ] Añadir la página web que los rediriga hacia las futuras paǵinas de la PlayStore y Apple Store
+
+-   [ ] Crear una mejor marca
+-   [ ] Decorar la pantalla de Login
+-   [ ] Mejorar el flujo de autenticación para que no pueda entrar sin aceptar todos los campos
+-   [x] Cambiar el servidor de NextJS a Express
+-   [ ] Integrar con Classroom
+-   [ ] Añadir la pantalla de todos los chats y del chat individual
+-   [ ] Crear las funciones que permitan acceder a los chats y los mensajes
+-   [ ] Añadir la página web que los rediriga hacia las futuras paǵinas de la PlayStore y Apple Store
 
 ## Como instalar
 
@@ -104,12 +105,14 @@ cd Soma
 ```
 
 **ANTES DE INSTALAR** los paquetes, copia el archivo .env.example de la carpeta principal y el que esta dentro de `apps/expo` a .env
+
 ```bash
 cp .env.example .env
 cp apps/expo/.env.example apps/expo/.env
 ```
 
 Instala todos los paquetes el proyecto necesita:
+
 ```bash
 npm install
 ```
@@ -138,6 +141,7 @@ Una vez dentro, cierra el servidor, regresate al directorio principal, y comienz
 cd ../..
 npm run dev
 ```
+
 Regresa a la aplicacion y reiniciala si es necesario. Ahora la aplicacion tendra en tu historial la aplicacion, asi que solo necesitas iniciar ambos servidores y presionar el link.
 
 ## Tech Stack

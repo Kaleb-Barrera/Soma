@@ -1,5 +1,5 @@
-import * as SecureStore from "expo-secure-store";
-import { Platform } from "react-native";
+import * as SecureStore from 'expo-secure-store';
+import { Platform } from 'react-native';
 
 export async function saveToken(key: string, value: string) {
     // console.log("Save token", key, value);
@@ -14,9 +14,9 @@ export async function getToken(key: string) {
 // SecureStore is not supported on the web
 // https://github.com/expo/expo/issues/7744#issuecomment-611093485
 export const tokenCache =
-    Platform.OS !== "web"
+    Platform.OS !== 'web'
         ? {
-            getToken,
-            saveToken,
-        }
+              getToken,
+              saveToken,
+          }
         : undefined;

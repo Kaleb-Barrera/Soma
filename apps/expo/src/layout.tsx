@@ -1,19 +1,19 @@
-import { NavigationContainer } from "@react-navigation/native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import * as React from "react";
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import * as React from 'react';
 
-import Login from "./screens/login";
-import Home from "./screens/home";
-import Profile from "./screens/Profile";
+import Login from './screens/login';
+import Home from './screens/home';
+import Profile from './screens/Profile';
 
-import { type RootStackParamList } from "./types/reactNavigationParams";
-import { TRPCProvider } from "./utils/trpc";
-import { ClerkLoaded, SignedIn, SignedOut } from "@clerk/clerk-expo";
+import { type RootStackParamList } from './types/reactNavigationParams';
+import { TRPCProvider } from './utils/trpc';
+import { ClerkLoaded, SignedIn, SignedOut } from '@clerk/clerk-expo';
 
 export default function Layout() {
     return (
         <NavigationContainer>
-            <RootNavigator/>
+            <RootNavigator />
         </NavigationContainer>
     );
 }
@@ -29,7 +29,7 @@ const RootNavigator = () => {
                         <Stack.Screen
                             name="Home"
                             component={Home}
-                            options={{ headerShown: false}}
+                            options={{ headerShown: false }}
                         />
                         <Stack.Screen
                             name="Profile"
