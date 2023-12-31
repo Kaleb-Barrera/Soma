@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { TRPCrouter, protectedProcedure, publicProcedure } from "../trpc";
-import { User } from "@soma/db";
+import { TRPCrouter, protectedProcedure } from "../trpc";
+import { type User } from "@soma/db";
 
 export const userRouter = TRPCrouter({
     getUser: protectedProcedure
@@ -22,7 +22,7 @@ export const userRouter = TRPCrouter({
     ).query(async ({ctx, input}) => {
         const userList: User[] = []
         for(const id of input){
-            ctx.prisma.user.findUnique({where:{userId:id}}).then(user => {
+            await ctx.prisma.user.findUnique({where:{userId:id}}).then(user => {
                 if(user) userList.push(user)
             })
         }

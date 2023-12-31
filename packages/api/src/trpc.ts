@@ -36,14 +36,14 @@ interface ContextWithAuth extends CreateExpressContextOptions {
  * @see https://create.t3.gg/en/usage/trpc#-servertrpccontextts
  */
 
-const createInnerTRPCContext = async (auth: AuthObject) => {
+const createInnerTRPCContext = (auth: AuthObject) => {
   return {
     auth,
     prisma
   }
 };
 
-const hasAuth = (x: any): x is RequestWithAuth => x.auth ?? false
+const hasAuth = (x: unknown): x is RequestWithAuth => !!x.auth
 
 function getAuth(req: BaseRequest | ContextWithAuth){
   if(!hasAuth(req)){
@@ -58,8 +58,8 @@ function getAuth(req: BaseRequest | ContextWithAuth){
  * @link https://trpc.io/docs/context
  */
 
-export const createTRPCContext = async ({req, res}: CreateExpressContextOptions | ContextWithAuth) => {
-  return await createInnerTRPCContext(
+export const createTRPCContext = ({req}: CreateExpressContextOptions | ContextWithAuth) => {
+  return createInnerTRPCContext(
     getAuth(req)
   );
 };

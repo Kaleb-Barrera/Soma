@@ -1,24 +1,27 @@
 import { TRPCError } from "@trpc/server";
-import type { OauthAccessTokenJSON } from "@clerk/clerk-sdk-node"
 
 import { TRPCrouter, protectedProcedure } from "../trpc";
 
-import type { CourseInfo } from "../types/CourseInfo"
+import { type CourseInfo, type CourseList, type TeacherList } from "../types/Classroom"
+import { isGoogleAccount } from "../types/ClerkUser";
+import { isOauthAccessToken } from "../types/ClerkToken";
+
+import {clerkClient} from "@clerk/clerk-sdk-node";
 
 export const classroomRouter = TRPCrouter({
     initialSetup: protectedProcedure.query(async ({ ctx }) => {
         const clerkId = ctx.auth.userId
+
+        const clerkUser = await clerkClient.users.getUser(clerkId)
         
-        const google_user = (await 
-            (await fetch(`https://api.clerk.com/v1/users/${clerkId}`, {
-                method: "GET",
-                headers: {
-                    "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY!}`
-                }
-            }))
-            .json())
-            .external_accounts[0]
+        //Since our users can only log in with their Google Account,
+        //the code only checks their first external account.
+        //This behaviour will change when we include more options for log in
+
+        if(!isGoogleAccount(clerkUser.externalAccounts[0]))
+            throw new TRPCError({code: "NOT_FOUND", message:"Clerk returned an object with an account that's not a Google one"})
             
+        const google_user = clerkUser.externalAccounts[0]
             
         const user = (await ctx.prisma.user.upsert({
             where: {
@@ -39,20 +42,13 @@ export const classroomRouter = TRPCrouter({
         
         const { userId } = user
 
-        const token_request = await fetch(`https://api.clerk.com/v1/users/${clerkId}/oauth_access_tokens/oauth_google`, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${process.env.CLERK_SECRET_KEY!}`
-            }
-        })
+        const tokens = await clerkClient.users.getUserOauthAccessToken(userId, "oauth_google")
 
-        const token_response = await token_request.json()
-
-        if (token_response.errors) {
-            throw new TRPCError({ code: "BAD_REQUEST", message: "Clerk server responded with error: " + token_response })
+        if(!isOauthAccessToken(tokens[0])){
+            throw new TRPCError({code: "NOT_FOUND", message: "Clerk responded with 0 Oauth tokens"})
         }
 
-        const { token } = token_response[0] as OauthAccessTokenJSON
+        const { token } = tokens[0]
 
         const courses_request = await fetch("https://classroom.googleapis.com/v1/courses", {
             method: "GET",
@@ -61,29 +57,31 @@ export const classroomRouter = TRPCrouter({
             }
         })
 
-        const courses_response = await courses_request.json()
+        const courses_response = await courses_request.json() as CourseList
 
-        const courses: CourseInfo["course"][] = courses_response.courses
+        const courses = courses_response.courses
 
         const response_data: CourseInfo[] = []
 
         for(const course of courses) {
-            const groupId = course.id! 
+            const groupId = course.id
+
+            const teacherList = await (
+                await fetch(`https://classroom.googleapis.com/v1/courses/${groupId}/teachers`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}`
+                    }  
+                }))
+            .json() as TeacherList
             
-            const all_teachers: CourseInfo["teachers"] = (
-                await (
-                    await fetch(`https://classroom.googleapis.com/v1/courses/${groupId}/teachers`, {
-                        method: "GET",
-                        headers: {
-                            "Authorization": `Bearer ${token}`
-                        }  
-                    }))
-                .json())
-                .teachers
+            const teachers = teacherList.teachers
 
-            response_data.push({course, teachers: all_teachers})
+            response_data.push({course, teachers: teachers})
 
-            const is_teacher = all_teachers.find((teacher) => teacher.userId === userId)
+            const is_teacher = !!teachers.find((teacher) => {
+                return teacher.userId === userId
+            })
             
             if(is_teacher){
                 await ctx.prisma.group.upsert({
@@ -92,8 +90,8 @@ export const classroomRouter = TRPCrouter({
                     },
                     create: {
                         groupId: groupId,
-                        groupName: course.name!,
-                        groupDescription: course.description,
+                        groupName: (course.name ?? groupId) as string,
+                        groupDescription: (course.description ?? "") as string,
                         teachers: {
                             create: {
                                 userId: userId
@@ -111,8 +109,8 @@ export const classroomRouter = TRPCrouter({
                         },
                     },
                     update: {
-                        groupName: course.name!,
-                        groupDescription: course.description!,
+                        groupName: (course.name ?? groupId) as string,
+                        groupDescription: (course.description ?? "") as string,
                         teachers: {
                             upsert: {
                                 where: {
@@ -165,8 +163,8 @@ export const classroomRouter = TRPCrouter({
                     },
                     create: {
                         groupId: groupId,
-                        groupName: course.name!,
-                        groupDescription: course.description,
+                        groupName: (course.name ?? groupId) as string,
+                        groupDescription: (course.description ?? "") as string,
                         subgroups: {
                             create: {
                                 subgroupId: "general",
@@ -179,8 +177,8 @@ export const classroomRouter = TRPCrouter({
                         }
                     },
                     update: {
-                        groupName: course.name!,
-                        groupDescription: course.description!,
+                        groupName: (course.name ?? groupId) as string,
+                        groupDescription: (course.description ?? "") as string,
                         subgroups: {
                             update: {
                                 where: {
