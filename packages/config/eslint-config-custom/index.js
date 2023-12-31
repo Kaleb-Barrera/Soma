@@ -1,14 +1,12 @@
 module.exports = {
     extends: [
-        "next",
         "turbo",
         "plugin:@typescript-eslint/recommended",
         "plugin:@typescript-eslint/recommended-requiring-type-checking",
-        "prettier",
         "plugin:react-hooks/recommended",
+        "prettier",
     ],
     rules: {
-        "@next/next/no-html-link-for-pages": "off",
         "@typescript-eslint/restrict-template-expressions": "off",
         "@typescript-eslint/no-unused-vars": [
             "error",
@@ -22,6 +20,7 @@ module.exports = {
             "error",
             { prefer: "type-imports", fixStyle: "inline-type-imports" },
         ],
+        "@typescript-eslint/no-empty-function": "off"
     },
     ignorePatterns: ["**/*.config.js", "**/*.config.cjs", "packages/config/**"],
     reportUnusedDisableDirectives: true,

@@ -10,10 +10,5 @@ module.exports = {
             "./apps/*/tsconfig.json",
             "./packages/*/tsconfig.json",
         ],
-    },
-    settings: {
-        next: {
-            rootDir: ["apps/nextjs"],
-        },
-    },
+    },    
 };
