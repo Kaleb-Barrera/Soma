@@ -1,4 +1,3 @@
-import {useContext} from "react";
 import { Text, View, Image, Button } from "react-native";
 
 import { useAppContext } from "../utils/AppContext";

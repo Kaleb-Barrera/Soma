@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { View, Text, Button, TextInput } from "react-native";
+import { View, Text, Button, FlatList } from "react-native";
 
 import { useSetupResources } from "../../hooks/useSetupResources";
 import { useGetAllGroups } from "../../hooks/databaseHooks";
@@ -24,6 +23,7 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
                         <Button title="Ir a perfil" onPress={() => {navigation.push("Profile")}}/>
                     ) : <></>
                 }
+                <Button title="Actualizar grupos" onPress={() => groups.refetch()}></Button>
                 {
                     !groups.data 
                     ? (<Text>Cargando grupos locales...</Text>) 
@@ -32,11 +32,14 @@ export default function Home({ navigation }: RootStackScreenProps<"Home">) {
                             ? (
                                 <>
                                     <Text>No se encontro ningun grupo</Text>
-                                    <Button title="Actualizar grupos" onPress={() => groups.refetch()}></Button>
                                 </>
                               )
                             : (<Text>Consultando la base de datos...</Text>) 
-                        : groups.data.map(group => (<GroupPreview {...group}></GroupPreview>))
+                        : (<FlatList 
+                            data={groups.data} 
+                            renderItem={(({item}) => (<GroupPreview {...item}></GroupPreview>))}
+                            keyExtractor={group => group.groupId}
+                        />)
                 }
             </View>
         </SafeAreaView>

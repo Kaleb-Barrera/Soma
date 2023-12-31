@@ -1,5 +1,4 @@
-import { createContext, useContext, useState } from "react";
-import { useDatabase } from "../hooks/useDatabase";
+import { createContext, useContext } from "react";
 
 import type { User } from '@soma/db';
 import type Database from '../types/database';
@@ -7,7 +6,7 @@ import type Database from '../types/database';
 interface AppContext {
     database: Database,
     user: User,
-    setUser: any
+    setUser: React.Dispatch<React.SetStateAction<User>>
 }
 
 export const AppContext = createContext<AppContext>({

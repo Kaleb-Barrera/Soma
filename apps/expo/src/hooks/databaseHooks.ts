@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 
 import { useAppContext } from "../utils/AppContext";
 import type { Group } from "@soma/db";
@@ -9,23 +9,27 @@ export const useGetAllGroups = () => {
     const [isFetching, setIsFetching] = useState(true)
 
     useEffect(() => {
-        async function loadGroups() {
-            if(groups) setIsFetching(false)
+        if(isFetching){
+            setGroups(null)
+        }
+    }, [isFetching])
+
+    useEffect(() => {
+        function loadGroups() {
             try {
-                console.log("------------Querying groups...------------");
-                
-                setGroups((await database.group.databaseLayer.executeSql('SELECT * FROM "Group"')).rows)
+                const groups_query = database.databaseLayer.executeSql('SELECT * FROM "Group"') as Group[]
+                setGroups(groups_query)
             } catch (error) {
                 console.error("ERROR at querying local database for all groups", error)
             }
         }
 
-        if(isFetching){
+        if(groups === null){
             loadGroups()
+        } else {
+            setIsFetching(false)
         }
-    }, [isFetching])
-
-    console.log({groups});    
+    }, [groups, database])
 
     return {
         data: groups,

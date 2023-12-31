@@ -6,14 +6,13 @@ export default function SignOutButton() {
     const onSignOutPress = async () => {
         try {
             await signOut();
-        } catch (err: any) {
-            console.log("Error:> " + err?.status || '');
-            console.log("Error:> " + err?.errors ? JSON.stringify(err.errors) : err);
+        } catch (err: unknown) {
+            console.log("Error:> ", err);
         }
     };
 
     return (
-        <TouchableOpacity onPress={onSignOutPress} className="mt-4 p-4 bg-blue-500 items-center rounded">
+        <TouchableOpacity onPress={void onSignOutPress} className="mt-4 p-4 bg-blue-500 items-center rounded">
             <Text className="text-base text-white"> Cerrar sesión</Text>
         </TouchableOpacity>
     )

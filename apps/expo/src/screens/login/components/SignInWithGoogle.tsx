@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import React from "react";
 import * as WebBrowser from "expo-web-browser"
 import { useWarmUpBrowser } from "../../../hooks/useWarmUpBrowser";
@@ -16,10 +17,11 @@ export default function SignInWithGoogle() {
     const onPress = React.useCallback(async () => {
         try {
             setDidError(false)
-            const { createdSessionId, signIn, signUp, setActive } =
+            const { createdSessionId, setActive } =
                 await startOAuthFlow();
 
             if (createdSessionId) {
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-call
                 setActive({ session: createdSessionId });
             } else {
                 // Use signIn or signUp for next steps such as MFA
@@ -28,13 +30,13 @@ export default function SignInWithGoogle() {
             console.error("OAuth error", err);
             setDidError(true)
         }
-    }, []);
+    }, [startOAuthFlow]);
 
     return (
         <>
             <TouchableOpacity
                 className="flex flex-row px-4 py-2 border border-slate-950 rounded-lg hover:border-slate-700 hover:shadow transition duration-150 items-center justify-center bg-white dark:bg-gray-900 dark:border-slate-200"
-                onPress={onPress}
+                onPress={void onPress}
             >
                 <Image source={require("../../../../assets/google-logo.png")} className="w-6 h-6" alt="Google" />
 

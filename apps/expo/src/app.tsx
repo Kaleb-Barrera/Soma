@@ -3,7 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { ClerkProvider } from '@clerk/clerk-expo';
 import Constants from 'expo-constants';
 
-import { useEffect, useState, createContext } from 'react';
+import { useEffect, useState } from 'react';
 
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
@@ -15,7 +15,7 @@ import Layout from './layout';
 
 import { useDatabase } from './hooks/useDatabase';
 
-import { User } from '@soma/db';
+import { type User } from '@soma/db';
 
 export default function App() {
 	const [appReady, setAppReady] = useState(false)
@@ -25,7 +25,7 @@ export default function App() {
 	useEffect(() => {
 	  async function loadResources() {
 		try {
-		  SplashScreen.preventAutoHideAsync()
+		  void SplashScreen.preventAutoHideAsync()
   
 		  const fontAssets = Font.loadAsync(Ionicons.font)
   
@@ -35,20 +35,22 @@ export default function App() {
 		  console.warn(e)
 		}
 		finally {
-		  SplashScreen.hideAsync()
+		  void SplashScreen.hideAsync()
 		  setAppReady(true)
 		}
 	  }
   
-	  loadResources()
+	  void loadResources()
 	}, [])
   
 	if (!appReady && !isAvailable) {
 	  return null
 	}
 
+	if(typeof Constants.expoConfig.extra.CLERK_PUBLISHABLE_KEY !== 'string') return
+
 	return (
-	  <ClerkProvider publishableKey={Constants.expoConfig.extra?.CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
+	  <ClerkProvider publishableKey={Constants.expoConfig.extra.CLERK_PUBLISHABLE_KEY} tokenCache={tokenCache}>
 		<AppContext.Provider value={{database: database, user: user, setUser: setUser}}>
 		  <SafeAreaProvider>
 			<Layout/>

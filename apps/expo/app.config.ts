@@ -1,4 +1,4 @@
-import { ExpoConfig, ConfigContext } from "@expo/config";
+import type { ExpoConfig, ConfigContext } from "@expo/config";
 
 import { config } from "dotenv";
 config()
@@ -33,7 +33,7 @@ const defineConfig = (_ctx: ConfigContext): ExpoConfig => ({
   },
   extra: {
     CLERK_PUBLISHABLE_KEY: process.env.CLERK_PUBLISHABLE_KEY,
-    NEXT_URL: process.env.NEXT_URL,
+    SERVER_URL: process.env.SERVER_URL,
   },
 })
 

@@ -15,7 +15,10 @@ export default function LoginScreen() {
     return (
         <SafeAreaView className="flex-1 bg-blue-700">
             <View className="flex-1 justify-end mt-40 bg-white dark:bg-slate-800">
-                <Image source={require("../../../assets/soma-login.png")} resizeMode={"contain"} className="w-full h-auto" />
+                <Image source={
+                    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                    require("../../../assets/soma-login.png")
+                    } resizeMode={"contain"} className="w-full h-auto" />
             </View>
             <View className="flex-1 items-center bg-white dark:bg-slate-800">
                 <SignInWithGoogle />

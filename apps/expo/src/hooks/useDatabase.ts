@@ -1,8 +1,11 @@
-import { ColumnMapping, columnTypes, IStatement, Migrations, Repository, sql } from 'expo-sqlite-orm'
+import * as SQLite from 'expo-sqlite'
+import { type ColumnMapping, columnTypes, type IStatement, Migrations, Repository, sql } from 'expo-sqlite-orm'
 import { useMemo, useState, useEffect } from 'react'
 
+/*
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing'
+*/
 
 import type Database from '../types/database'
 import type { User, Group, Subgroup, isTeacherAt, isStudentAt, isOwnerOf, Message } from "@soma/db"
@@ -175,6 +178,7 @@ export function useDatabase() {
         isMigrating: true, 
         isAvailable: false, 
         database: {
+            databaseLayer: null,
             user: null, 
             group: null, 
             subgroup: null, 
@@ -203,6 +207,10 @@ export function useDatabase() {
                 isMigrating: false,
                 isAvailable: true,
                 database: {
+                    databaseLayer: {
+                        rawAccess: SQLite.openDatabase(databaseName),
+                        executeSql: executeSql
+                    },
                     user: userRepo,
                     group: groupRepo,
                     subgroup: subgroupRepo,
@@ -214,8 +222,19 @@ export function useDatabase() {
             })
         }
 
-        setupDatabase()
-    }, [])
+        void setupDatabase()
+    }, [groupRepo, isOwnerOfRepo, isStudentAtRepo, isTeacherAtRepo, messageRepo, migrations, subgroupRepo, userRepo])
 
   return data
+}
+
+function executeSql(sql: string, params: (string|number)[] = [], db = SQLite.openDatabase(databaseName)): unknown[] {
+    let result = []
+    db.transaction(tx => 
+        tx.executeSql(sql, params, (_txObj, {rows}) => result = rows._array as unknown[]),
+        (error) => {
+            throw new Error(error.message)
+        }
+    )
+    return result
 }

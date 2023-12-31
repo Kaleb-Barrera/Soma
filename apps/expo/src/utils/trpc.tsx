@@ -5,7 +5,6 @@ import type { AppRouter } from "@soma/api";
  * setting the baseUrl to your production API URL.
  */
 import Constants from "expo-constants";
-const {manifest2} = Constants
 /**
  * A wrapper for your app that provides the TRPC context.
  * Use only in app.tsx
