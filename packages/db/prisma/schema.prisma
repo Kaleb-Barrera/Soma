@@ -12,27 +12,29 @@ datasource db {
 }
 
 model User {
-    userId       String   @id @default(cuid())
-    profileImg   String?
+    userId     String  @id @default(cuid())
+    profileImg String?
 
-    firstName    String
-    lastName     String?
-    gender       String?
+    firstName String
+    lastName  String?
+    gender    String?
 
-    email        String? @unique
+    email String? @unique
 
     lastLoggedIn DateTime? @default(now())
 
-    teachesAt isTeacherAt[]
+    teachesAt     isTeacherAt[]
     ownsSubgroups isOwnerOf[]
-    isStudentAt isStudentAt[]
-    
+    isStudentAt   isStudentAt[]
+
     messages Message[]
+
+    events Event[]
 }
 
 model Group {
-    groupId   String @id @default(cuid())
-    groupName String
+    groupId          String  @id @default(cuid())
+    groupName        String
     groupDescription String?
 
     groupImage String?
@@ -42,12 +44,14 @@ model Group {
     subgroups Subgroup[]
 
     teachers isTeacherAt[]
+
+    events Event[]
 }
 
 model Subgroup {
     subgroupId String
-    
-    group Group @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
+
+    group   Group  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
     groupId String
 
     owners   isOwnerOf[]
@@ -55,19 +59,22 @@ model Subgroup {
 
     messages Message[]
 
+    events Event[]
+
     createdAt DateTime @default(now())
 
     @@id([groupId, subgroupId])
     @@index([groupId])
-
 }
 
-model isTeacherAt{
-    user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+model isTeacherAt {
+    user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
     userId String
 
-    group Group @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
+    group   Group  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
     groupId String
+
+    events Event[]
 
     @@id([userId, groupId])
     @@index([userId])
@@ -75,12 +82,14 @@ model isTeacherAt{
 }
 
 model isStudentAt {
-    user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
     userId String
 
-    subgroup Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
-    groupId String
+    subgroup   Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
+    groupId    String
     subgroupId String
+
+    events Event[]
 
     @@id([userId, groupId, subgroupId])
     @@index([userId])
@@ -88,12 +97,14 @@ model isStudentAt {
 }
 
 model isOwnerOf {
-    user User @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    user   User   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
     userId String
 
-    subgroup Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
-    groupId String
+    subgroup   Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
+    groupId    String
     subgroupId String
+
+    events Event[]
 
     @@id([userId, groupId, subgroupId])
     @@index([userId])
@@ -103,11 +114,11 @@ model isOwnerOf {
 model Message {
     messageId String @id @default(cuid())
 
-    author User @relation(fields: [authorId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-    authorId String
+    author   User?   @relation(fields: [authorId], references: [userId], onDelete: SetNull, onUpdate: Cascade)
+    authorId String?
 
-    subgroup Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
-    groupId String
+    subgroup   Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
+    groupId    String
     subgroupId String
 
     content String
@@ -115,7 +126,48 @@ model Message {
     createdAt DateTime  @default(now())
     updatedAt DateTime?
 
+    events Event[]
+
     @@index([authorId])
     @@index([groupId, subgroupId])
 }
 
+model eventType {
+    id          Int    @id @default(autoincrement())
+    description String
+
+    events Event[]
+}
+
+model Event {
+    id Int @id @default(autoincrement())
+
+    type   eventType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    typeId Int
+
+    user   User?   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
+    userId String?
+
+    group   Group?  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
+    groupId String?
+
+    subgroup   Subgroup? @relation(fields: [subgroupId, groupId], references: [subgroupId, groupId], onDelete: Cascade, onUpdate: Cascade)
+    subgroupId String?
+
+    teacherEvents isTeacherAt? @relation(fields: [userId, groupId], references: [userId, groupId], onDelete: Cascade, onUpdate: Cascade)
+    studentEvents isStudentAt? @relation(fields: [userId, groupId, subgroupId], references: [userId, groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
+    ownerEvents   isOwnerOf?   @relation(fields: [userId, groupId, subgroupId], references: [userId, groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
+
+    message   Message? @relation(fields: [messageId], references: [messageId], onDelete: Cascade, onUpdate: Cascade)
+    messageId String?
+
+    createdAt DateTime @default(now())
+
+    @@index([typeId])
+    @@index([userId])
+    @@index([groupId])
+    @@index([messageId])
+    @@index([userId, groupId])
+    @@index([subgroupId, groupId])
+    @@index([userId, groupId, subgroupId])
+}
