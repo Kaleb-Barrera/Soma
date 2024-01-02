@@ -10,7 +10,6 @@
     "engines": {
         "node": "^20.0"
     },
-    "packageManager": "npm@10.2.3",
     "scripts": {
         "install:expo": "cd apps/expo && npm run install:locally @expo/vector-icons",
         "postinstall": "npm run install:expo && npm run db:generate",
@@ -23,7 +22,6 @@
         "db:migrate": "turbo db:migrate"
     },
     "dependencies": {
-        "googleapis": "^118.0.0",
         "turbo": "^1.11.0"
     },
     "devDependencies": {
