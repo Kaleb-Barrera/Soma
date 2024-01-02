@@ -21,21 +21,26 @@ import { useAuth } from '@clerk/clerk-expo';
 export const trpc = createTRPCReact<AppRouter>();
 
 const getBaseUrl = () => {
-    /**
-     * Gets the IP address of your host-machine. If it cannot automatically find it,
-     * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
-     * you don't have anything else running on it, or you'd have to change it.
-     */
-    const host = Constants.expoConfig.hostUri;
-    console.log({ host });
-
-    if (!host)
-        throw new Error('failed to get localhost, configure it manually');
-
-    if (Constants.expoConfig.extra.NODE_ENV === 'production')
+    let host = undefined
+    if (Constants.expoConfig.extra.NODE_ENV === 'production'){
+        if(typeof Constants.expoConfig.extra.SERVER_URL !== 'string')
+            throw new Error("Failed to get SERVER_URL")
+        host = Constants.expoConfig.extra.SERVER_URL
         return `https://${host}`;
+    } else {
+        /**
+         * Gets the IP address of your host-machine. If it cannot automatically find it,
+         * you'll have to manually set it. NOTE: Port 3000 should work for most but confirm
+         * you don't have anything else running on it, or you'd have to change it.
+        */
+        host = Constants.expoConfig.hostUri;
+        if (!host)
+            throw new Error('failed to get localhost, configure it manually');
+        return `http://${host.split(':')[0]}:3000`;
+    }
 
-    return `http://${host.split(':')[0]}:3000`;
+    
+
 };
 
 export const TRPCProvider: React.FC<{
