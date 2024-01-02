@@ -43,10 +43,8 @@ const createInnerTRPCContext = (auth: AuthObject) => {
     };
 };
 
-const hasAuth = (x: unknown): x is RequestWithAuth => !!x.auth;
-
-function getAuth(req: BaseRequest | ContextWithAuth) {
-    if (!hasAuth(req)) {
+function getAuth(req: BaseRequest | RequestWithAuth) {
+    if (!('auth' in req)) {
         throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Auth object not found in request body',

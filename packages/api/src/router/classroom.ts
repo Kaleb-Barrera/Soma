@@ -2,34 +2,92 @@ import { TRPCError } from '@trpc/server';
 
 import { TRPCrouter, protectedProcedure } from '../trpc';
 
-import {
-    type CourseInfo,
-    type CourseList,
-    type TeacherList,
-} from '../types/Classroom';
-import { isGoogleAccount } from '../types/ClerkUser';
-import { isOauthAccessToken } from '../types/ClerkToken';
-
 import { clerkClient } from '@clerk/clerk-sdk-node';
+
+import type { ExternalAccount, User, Verification } from '@clerk/clerk-sdk-node';
+import type { classroom_v1 } from 'googleapis/build/src/apis/classroom/v1.d.ts';
+import env from '../env';
+
+interface Course extends classroom_v1.Schema$Course {
+    id: string;
+}
+
+interface Teacher extends classroom_v1.Schema$Teacher {
+    userId: string;
+}
+
+interface CourseList {
+    courses: Course[];
+    nextPageToken: string | null;
+}
+
+interface TeacherList {
+    teachers: Teacher[];
+    nextPageToken: string | null;
+}
+
+interface CourseInfo {
+    course: Course;
+    teachers: Teacher[];
+}
+
+interface GoogleAccount {
+    object: 'google_account';
+    id: string;
+    google_id: string;
+    approved_scopes: string;
+    email_address: string;
+    given_name: string;
+    family_name: string;
+    picture: string;
+    username: string | null;
+    public_metadata: Record<string, unknown> | null;
+    label: string | null;
+    verification: Verification | null;
+}
+type UnknownExternalAccount = ExternalAccount | GoogleAccount;
+
+interface ClerkUser extends User {
+    external_accounts: UnknownExternalAccount[]
+}
+
+const isGoogleAccount = (x: UnknownExternalAccount): x is GoogleAccount => 'object' in x;
+
+
 
 export const classroomRouter = TRPCrouter({
     initialSetup: protectedProcedure.query(async ({ ctx }) => {
         const clerkId = ctx.auth.userId;
 
-        const clerkUser = await clerkClient.users.getUser(clerkId);
+        const clerkUser = (await 
+            (await fetch(`https://api.clerk.com/v1/users/${clerkId}`, {
+                method: "GET",
+                headers: {
+                    "Authorization": `Bearer ${env.CLERK_SECRET_KEY}`
+                }
+            }))
+            .json()) as ClerkUser
 
         //Since our users can only log in with their Google Account,
         //the code only checks their first external account.
         //This behaviour will change when we include more options for log in
 
-        if (!isGoogleAccount(clerkUser.externalAccounts[0]))
+        if(!clerkUser.external_accounts[0]){
+            throw new TRPCError({
+                code: "NOT_FOUND",
+                message: "Clerk returned an object with no external accounts"
+            });
+            
+        }
+
+        if (!isGoogleAccount(clerkUser.external_accounts[0]))
             throw new TRPCError({
                 code: 'NOT_FOUND',
                 message:
                     "Clerk returned an object with an account that's not a Google one",
             });
 
-        const google_user = clerkUser.externalAccounts[0];
+        const google_user = clerkUser.external_accounts[0];
 
         const user = await ctx.prisma.user.upsert({
             where: {
@@ -40,6 +98,11 @@ export const classroomRouter = TRPCrouter({
                 firstName: google_user.given_name,
                 lastName: google_user.family_name,
                 email: google_user.email_address,
+                events: {
+                    create: {
+                        typeId: 1,
+                    }
+                }
             },
             update: {
                 firstName: google_user.given_name,
@@ -48,14 +111,16 @@ export const classroomRouter = TRPCrouter({
             },
         });
 
+        const googleId = google_user.google_id
+
         const { userId } = user;
 
         const tokens = await clerkClient.users.getUserOauthAccessToken(
-            userId,
+            clerkId,
             'oauth_google',
         );
 
-        if (!isOauthAccessToken(tokens[0])) {
+        if (!tokens[0]) {
             throw new TRPCError({
                 code: 'NOT_FOUND',
                 message: 'Clerk responded with 0 Oauth tokens',
@@ -100,7 +165,7 @@ export const classroomRouter = TRPCrouter({
             response_data.push({ course, teachers: teachers });
 
             const is_teacher = !!teachers.find((teacher) => {
-                return teacher.userId === userId;
+                return teacher.userId === googleId;
             });
 
             if (is_teacher) {
@@ -115,6 +180,11 @@ export const classroomRouter = TRPCrouter({
                         teachers: {
                             create: {
                                 userId: userId,
+                                events: {
+                                    create: {
+                                        typeId: 7
+                                    }
+                                }
                             },
                         },
                         subgroups: {
@@ -124,9 +194,14 @@ export const classroomRouter = TRPCrouter({
                                     create: {
                                         userId: userId,
                                     },
-                                },
+                                }
                             },
                         },
+                        events: {
+                            create: {
+                                typeId: 5
+                            }
+                        }
                     },
                     update: {
                         groupName: (course.name ?? groupId) as string,
@@ -141,6 +216,11 @@ export const classroomRouter = TRPCrouter({
                                 },
                                 create: {
                                     userId: userId,
+                                    events: {
+                                        create: {
+                                            typeId: 7
+                                        }
+                                    }
                                 },
                                 update: {},
                             },
@@ -189,10 +269,20 @@ export const classroomRouter = TRPCrouter({
                                 students: {
                                     create: {
                                         userId: userId,
+                                        events: {
+                                            create: {
+                                                typeId: 8
+                                            }
+                                        }
                                     },
                                 },
                             },
                         },
+                        events: {
+                            create: {
+                                typeId: 5
+                            },
+                        }
                     },
                     update: {
                         groupName: (course.name ?? groupId) as string,
@@ -217,6 +307,11 @@ export const classroomRouter = TRPCrouter({
                                             },
                                             create: {
                                                 userId: userId,
+                                                events: {
+                                                    create: {
+                                                        typeId: 8
+                                                    }
+                                                }
                                             },
                                             update: {},
                                         },

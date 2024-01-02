@@ -26,20 +26,17 @@ export const userRouter = TRPCrouter({
             }
             return userList;
         }),
-    getAllGroups: protectedProcedure
+    updateLocalInfo: protectedProcedure
         .input(z.string())
-        .query(async ({ ctx, input }) => {
-            const { userId } = await ctx.prisma.user.findUniqueOrThrow({
+        .query(async ({ ctx, input: userId }) => {
+            return await ctx.prisma.event.findMany({
                 where: {
-                    userId: input,
-                },
-            });
-            return await ctx.prisma.user.findUniqueOrThrow({
-                where: {
-                    userId: userId,
+                    userId: userId
                 },
                 select: {
-                    isStudentAt: {
+                    id: true,
+                    typeId: true,
+                    studentEvents: {
                         include: {
                             subgroup: {
                                 include: {
@@ -52,9 +49,9 @@ export const userRouter = TRPCrouter({
                                     students: true,
                                 },
                             },
-                        },
+                        }
                     },
-                    teachesAt: {
+                    teacherEvents: {
                         include: {
                             group: {
                                 include: {
@@ -76,7 +73,7 @@ export const userRouter = TRPCrouter({
                             },
                         },
                     },
-                    ownsSubgroups: {
+                    ownerEvents: {
                         where: {
                             NOT: {
                                 subgroup: {
@@ -103,8 +100,8 @@ export const userRouter = TRPCrouter({
                                 },
                             },
                         },
-                    },
-                },
-            });
+                    }
+                }
+            })
         }),
 });
