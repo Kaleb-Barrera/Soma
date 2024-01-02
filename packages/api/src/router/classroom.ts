@@ -4,7 +4,11 @@ import { TRPCrouter, protectedProcedure } from '../trpc';
 
 import { clerkClient } from '@clerk/clerk-sdk-node';
 
-import type { ExternalAccount, User, Verification } from '@clerk/clerk-sdk-node';
+import type {
+    ExternalAccount,
+    User,
+    Verification,
+} from '@clerk/clerk-sdk-node';
 import type { classroom_v1 } from 'googleapis/build/src/apis/classroom/v1.d.ts';
 import env from '../env';
 
@@ -48,36 +52,34 @@ interface GoogleAccount {
 type UnknownExternalAccount = ExternalAccount | GoogleAccount;
 
 interface ClerkUser extends User {
-    external_accounts: UnknownExternalAccount[]
+    external_accounts: UnknownExternalAccount[];
 }
 
-const isGoogleAccount = (x: UnknownExternalAccount): x is GoogleAccount => 'object' in x;
-
-
+const isGoogleAccount = (x: UnknownExternalAccount): x is GoogleAccount =>
+    'object' in x;
 
 export const classroomRouter = TRPCrouter({
     initialSetup: protectedProcedure.query(async ({ ctx }) => {
         const clerkId = ctx.auth.userId;
 
-        const clerkUser = (await 
-            (await fetch(`https://api.clerk.com/v1/users/${clerkId}`, {
-                method: "GET",
+        const clerkUser = (await (
+            await fetch(`https://api.clerk.com/v1/users/${clerkId}`, {
+                method: 'GET',
                 headers: {
-                    "Authorization": `Bearer ${env.CLERK_SECRET_KEY}`
-                }
-            }))
-            .json()) as ClerkUser
+                    Authorization: `Bearer ${env.CLERK_SECRET_KEY}`,
+                },
+            })
+        ).json()) as ClerkUser;
 
         //Since our users can only log in with their Google Account,
         //the code only checks their first external account.
         //This behaviour will change when we include more options for log in
 
-        if(!clerkUser.external_accounts[0]){
+        if (!clerkUser.external_accounts[0]) {
             throw new TRPCError({
-                code: "NOT_FOUND",
-                message: "Clerk returned an object with no external accounts"
+                code: 'NOT_FOUND',
+                message: 'Clerk returned an object with no external accounts',
             });
-            
         }
 
         if (!isGoogleAccount(clerkUser.external_accounts[0]))
@@ -101,8 +103,8 @@ export const classroomRouter = TRPCrouter({
                 events: {
                     create: {
                         typeId: 1,
-                    }
-                }
+                    },
+                },
             },
             update: {
                 firstName: google_user.given_name,
@@ -111,7 +113,7 @@ export const classroomRouter = TRPCrouter({
             },
         });
 
-        const googleId = google_user.google_id
+        const googleId = google_user.google_id;
 
         const { userId } = user;
 
@@ -182,9 +184,9 @@ export const classroomRouter = TRPCrouter({
                                 userId: userId,
                                 events: {
                                     create: {
-                                        typeId: 7
-                                    }
-                                }
+                                        typeId: 7,
+                                    },
+                                },
                             },
                         },
                         subgroups: {
@@ -194,14 +196,14 @@ export const classroomRouter = TRPCrouter({
                                     create: {
                                         userId: userId,
                                     },
-                                }
+                                },
                             },
                         },
                         events: {
                             create: {
-                                typeId: 5
-                            }
-                        }
+                                typeId: 5,
+                            },
+                        },
                     },
                     update: {
                         groupName: (course.name ?? groupId) as string,
@@ -218,9 +220,9 @@ export const classroomRouter = TRPCrouter({
                                     userId: userId,
                                     events: {
                                         create: {
-                                            typeId: 7
-                                        }
-                                    }
+                                            typeId: 7,
+                                        },
+                                    },
                                 },
                                 update: {},
                             },
@@ -271,18 +273,18 @@ export const classroomRouter = TRPCrouter({
                                         userId: userId,
                                         events: {
                                             create: {
-                                                typeId: 8
-                                            }
-                                        }
+                                                typeId: 8,
+                                            },
+                                        },
                                     },
                                 },
                             },
                         },
                         events: {
                             create: {
-                                typeId: 5
+                                typeId: 5,
                             },
-                        }
+                        },
                     },
                     update: {
                         groupName: (course.name ?? groupId) as string,
@@ -309,9 +311,9 @@ export const classroomRouter = TRPCrouter({
                                                 userId: userId,
                                                 events: {
                                                     create: {
-                                                        typeId: 8
-                                                    }
-                                                }
+                                                        typeId: 8,
+                                                    },
+                                                },
                                             },
                                             update: {},
                                         },

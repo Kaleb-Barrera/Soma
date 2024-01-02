@@ -31,7 +31,7 @@ export const userRouter = TRPCrouter({
         .query(async ({ ctx, input: userId }) => {
             return await ctx.prisma.event.findMany({
                 where: {
-                    userId: userId
+                    userId: userId,
                 },
                 select: {
                     id: true,
@@ -49,7 +49,7 @@ export const userRouter = TRPCrouter({
                                     students: true,
                                 },
                             },
-                        }
+                        },
                     },
                     teacherEvents: {
                         include: {
@@ -100,8 +100,8 @@ export const userRouter = TRPCrouter({
                                 },
                             },
                         },
-                    }
-                }
-            })
+                    },
+                },
+            });
         }),
 });

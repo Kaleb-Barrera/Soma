@@ -35,7 +35,7 @@ export default function SignInWithGoogle() {
         <>
             <TouchableOpacity
                 className="flex flex-row px-4 py-2 border border-slate-950 rounded-lg hover:border-slate-700 hover:shadow transition duration-150 items-center justify-center bg-white dark:bg-gray-900 dark:border-slate-200"
-                onPress={void onPress}>
+                onPress={onPress}>
                 <Image
                     source={require('../../../../assets/google-logo.png')}
                     className="w-6 h-6"

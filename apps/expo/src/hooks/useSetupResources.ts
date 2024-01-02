@@ -23,7 +23,7 @@ export const useSetupResources = () => {
         newUsersSaved: false,
     });
     const setup = trpc.classroom.initialSetup.useQuery();
-    const allGroups = trpc.user.getAllGroups.useQuery(
+    const allGroups = trpc.user.updateLocalInfo.useQuery(
         setup.data ? setup.data.userId : '',
         {
             enabled: false,
@@ -41,10 +41,10 @@ export const useSetupResources = () => {
         } = status;
 
         if (stepOne && !stepTwo && !stepThree) {
-            allGroups.refetch();
+            void allGroups.refetch();
         } else if (stepOne && stepTwo && !stepThree) {
             if (newUsersIdList && newUsersIdList.length !== 0)
-                allUsers.refetch();
+                void allUsers.refetch();
             else
                 setStatus({
                     userObjectAvailable: true,
@@ -130,6 +130,7 @@ export const useSetupResources = () => {
                 console.log(
                     '------------Updating groups and roles...------------',
                 );
+                console.log(allGroups.data);
 
                 const list = await setupGroupsAndRoles(
                     allGroups.data,
@@ -155,19 +156,8 @@ export const useSetupResources = () => {
             }
         }
 
-        manageUpdates();
-    }, [
-        setup.isSuccess,
-        allGroups.isSuccess,
-        allUsers.isSuccess,
-        setup.fetchStatus,
-        allGroups.fetchStatus,
-        allUsers.fetchStatus,
-        setup.data,
-        allGroups.data,
-        allUsers.data,
-        database,
-    ]);
+        void manageUpdates();
+    }, [setup, allGroups, allUsers, setUser, database]);
 
     console.log('status: ', status);
     console.log(setup.status, allGroups.status, allUsers.status);
@@ -215,10 +205,10 @@ async function saveNewUsers(newUserList: User[], database: Database) {
     console.log('-------------New users saved--------------------');
 }
 
-async function setupGroupsAndRoles(data, database: Database) {
-    const allRegisteredIds: User['userId'][] = (
-        await database.user.databaseLayer.executeSql('SELECT userId FROM User')
-    ).rows;
+function setupGroupsAndRoles(data, database: Database) {
+    const allRegisteredIds = database.databaseLayer.executeSql(
+        'SELECT userId FROM User',
+    ) as User['userId'][];
 
     const group_list: Group[] = [];
     const subgroup_list: Subgroup[] = [];
@@ -371,11 +361,11 @@ async function setupGroupsAndRoles(data, database: Database) {
         const { groupId, groupName, groupDescription, groupImage, createdAt } =
             group;
         try {
-            await database.group.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'UPDATE OR IGNORE "Group" SET groupName=?, groupDescription=?, groupImage=? WHERE groupId=?',
                 [groupName, groupDescription, groupImage, groupId],
             );
-            await database.group.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'INSERT OR IGNORE INTO "Group" (groupId, groupName, groupDescription, groupImage, createdAt) VALUES(?,?,?,?,?)',
                 [
                     groupId,
@@ -394,7 +384,7 @@ async function setupGroupsAndRoles(data, database: Database) {
     for (const subgroup of subgroup_list) {
         const { groupId, subgroupId, createdAt } = subgroup;
         try {
-            await database.subgroup.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'INSERT OR IGNORE INTO Subgroup (subgroupId, groupId, createdAt) VALUES(?,?,?)',
                 [subgroupId, groupId, createdAt.getTime()],
             );
@@ -407,7 +397,7 @@ async function setupGroupsAndRoles(data, database: Database) {
     for (const student of isStudentAt) {
         const { groupId, subgroupId, userId } = student;
         try {
-            await database.group.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'INSERT OR IGNORE INTO "isStudentAt" (groupId, subgroupId, userId) VALUES(?,?,?)',
                 [groupId, subgroupId, userId],
             );
@@ -420,7 +410,7 @@ async function setupGroupsAndRoles(data, database: Database) {
     for (const teacher of isTeacherAt) {
         const { groupId, userId } = teacher;
         try {
-            await database.group.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'INSERT OR IGNORE INTO "isTeacherAt" (groupId, userId) VALUES(?,?)',
                 [groupId, userId],
             );
@@ -433,7 +423,7 @@ async function setupGroupsAndRoles(data, database: Database) {
     for (const owner of isOwnerOf) {
         const { groupId, subgroupId, userId } = owner;
         try {
-            await database.group.databaseLayer.executeSql(
+            database.databaseLayer.executeSql(
                 'INSERT OR IGNORE INTO "isOwnerOf" (groupId, subgroupId, userId) VALUES(?,?,?)',
                 [groupId, subgroupId, userId],
             );

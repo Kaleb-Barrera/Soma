@@ -46,7 +46,7 @@ export default function App() {
     }
 
     if (typeof Constants.expoConfig.extra.CLERK_PUBLISHABLE_KEY !== 'string')
-        throw new Error("CLER_PUBLISHABLE_KEY not set")
+        throw new Error('CLER_PUBLISHABLE_KEY not set');
 
     return (
         <ClerkProvider

@@ -4,11 +4,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useColorScheme } from 'nativewind';
 import Ionicons from '@expo/vector-icons/Ionicons';
-// import { type RootStackScreenProps } from "../types/react-navigation"
 
 import SignInWithGoogle from './components/SignInWithGoogle';
 
-//{ navigation, }: RootStackScreenProps<"Login">
 export default function LoginScreen() {
     const { toggleColorScheme, colorScheme } = useColorScheme();
 
