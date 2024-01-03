@@ -26,82 +26,17 @@ export const userRouter = TRPCrouter({
             }
             return userList;
         }),
-    updateLocalInfo: protectedProcedure
+    findEvents: protectedProcedure
         .input(z.string())
-        .query(async ({ ctx, input: userId }) => {
+        .query(async ({ctx, input}) => {
             return await ctx.prisma.event.findMany({
                 where: {
-                    userId: userId,
-                },
-                select: {
-                    id: true,
-                    typeId: true,
-                    studentEvents: {
-                        include: {
-                            subgroup: {
-                                include: {
-                                    group: {
-                                        include: {
-                                            teachers: true,
-                                        },
-                                    },
-                                    owners: true,
-                                    students: true,
-                                },
-                            },
-                        },
-                    },
-                    teacherEvents: {
-                        include: {
-                            group: {
-                                include: {
-                                    teachers: true,
-                                    subgroups: {
-                                        where: {
-                                            owners: {
-                                                every: {
-                                                    userId: userId,
-                                                },
-                                            },
-                                        },
-                                        include: {
-                                            students: true,
-                                            owners: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                    ownerEvents: {
-                        where: {
-                            NOT: {
-                                subgroup: {
-                                    group: {
-                                        teachers: {
-                                            every: {
-                                                userId: userId,
-                                            },
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                        include: {
-                            subgroup: {
-                                include: {
-                                    students: true,
-                                    owners: true,
-                                    group: {
-                                        include: {
-                                            teachers: true,
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                },
-            });
+                    values: {
+                        equals: {
+                            userId: input
+                        }
+                    }
+                }
+            })
         }),
 });
