@@ -30,11 +30,6 @@ interface TeacherList {
     nextPageToken: string | null;
 }
 
-interface CourseInfo {
-    course: Course;
-    teachers: Teacher[];
-}
-
 interface GoogleAccount {
     object: 'google_account';
     id: string;
@@ -91,27 +86,44 @@ export const classroomRouter = TRPCrouter({
 
         const google_user = clerkUser.external_accounts[0];
 
-        const user = await ctx.prisma.user.upsert({
+        let user = await ctx.prisma.user.findUnique({
             where: {
-                email: google_user.email_address,
-            },
-            create: {
-                profileImg: google_user.picture,
-                firstName: google_user.given_name,
-                lastName: google_user.family_name,
-                email: google_user.email_address,
-                events: {
-                    create: {
-                        typeId: 1,
-                    },
+                email: google_user.email_address
+            }
+        })
+
+        if(user){
+            user = await ctx.prisma.user.update({
+                where: {
+                    userId: user.userId
                 },
-            },
-            update: {
-                firstName: google_user.given_name,
-                lastName: google_user.family_name,
-                lastLoggedIn: new Date(Date.now()),
-            },
-        });
+                data: {
+                    profileImg: google_user.picture,
+                    firstName: google_user.given_name,
+                    lastName: google_user.family_name,
+                }
+            })
+
+        }else{
+            user = await ctx.prisma.user.create({
+                data: {
+                    profileImg: google_user.picture,
+                    firstName: google_user.given_name,
+                    lastName: google_user.family_name,
+                    email: google_user.email_address
+                }
+            });
+    
+            await ctx.prisma.event.create({
+                data: {
+                    action: 1,
+                    values: {
+                        userId: user.userId
+                    }
+                }
+            })
+        }
+
 
         const googleId = google_user.google_id;
 
@@ -145,8 +157,6 @@ export const classroomRouter = TRPCrouter({
 
         const courses = courses_response.courses;
 
-        const response_data: CourseInfo[] = [];
-
         for (const course of courses) {
             const groupId = course.id;
 
@@ -164,165 +174,219 @@ export const classroomRouter = TRPCrouter({
 
             const teachers = teacherList.teachers;
 
-            response_data.push({ course, teachers: teachers });
-
             const is_teacher = !!teachers.find((teacher) => {
                 return teacher.userId === googleId;
             });
 
-            if (is_teacher) {
-                await ctx.prisma.group.upsert({
+            let is_registered = false
+
+            if(is_teacher){
+                is_registered = !!(await ctx.prisma.isTeacherAt.findUnique({
                     where: {
-                        groupId: groupId,
-                    },
-                    create: {
-                        groupId: groupId,
-                        groupName: (course.name ?? groupId) as string,
-                        groupDescription: (course.description ?? '') as string,
-                        teachers: {
-                            create: {
-                                userId: userId,
-                                events: {
-                                    create: {
-                                        typeId: 7,
-                                    },
-                                },
-                            },
-                        },
-                        subgroups: {
-                            create: {
-                                subgroupId: 'general',
-                                owners: {
-                                    create: {
-                                        userId: userId,
-                                    },
-                                },
-                            },
-                        },
-                        events: {
-                            create: {
-                                typeId: 5,
-                            },
-                        },
-                    },
-                    update: {
-                        groupName: (course.name ?? groupId) as string,
-                        groupDescription: (course.description ?? '') as string,
-                        teachers: {
-                            upsert: {
-                                where: {
-                                    userId_groupId: {
-                                        userId: userId,
-                                        groupId: groupId,
-                                    },
-                                },
-                                create: {
-                                    userId: userId,
-                                    events: {
-                                        create: {
-                                            typeId: 7,
-                                        },
-                                    },
-                                },
-                                update: {},
-                            },
-                        },
-                        subgroups: {
-                            update: {
-                                where: {
-                                    groupId_subgroupId: {
-                                        groupId: groupId,
-                                        subgroupId: 'general',
-                                    },
-                                },
-                                data: {
-                                    owners: {
-                                        upsert: {
-                                            where: {
-                                                userId_groupId_subgroupId: {
-                                                    userId: userId,
-                                                    groupId: groupId,
-                                                    subgroupId: 'general',
-                                                },
-                                            },
-                                            create: {
-                                                userId: userId,
-                                            },
-                                            update: {},
-                                        },
-                                    },
-                                },
-                            },
-                        },
-                    },
-                });
+                        userId_groupId: {
+                            userId: userId,
+                            groupId: groupId
+                        }
+                    }
+                }))
             } else {
-                await ctx.prisma.group.upsert({
+                is_registered = !!(await ctx.prisma.isStudentAt.findUnique({
                     where: {
+                        userId_groupId_subgroupId: {
+                            userId: userId,
+                            groupId: groupId,
+                            subgroupId: "general"
+                        }
+                    }
+                }))
+            }
+
+            const group_exists = !!(await ctx.prisma.group.findUnique({
+                where: {
+                    groupId: groupId
+                }
+            }))
+
+            const groupName = (course.name ?? groupId) as string
+            const groupDescription = (course.description ?? "") as string
+
+            /**
+             * 0: Group doesnt exist, user is teacher and they aren't registered in the group
+             * 1: Group doesnt exist, user is teacher and they are already part of the group --CANT EXIST--
+             * 2: Group doesn't exist, user is student and they aren't registered in the group
+             * 3: Group doesn't exist, user is student and they are already part of the group --CANT EXIST--
+             * 4: Group exists, user is teacher and they aren't registered in the group
+             * 5: Group exists, user is teacher and they are already part of the group --SAME AS 7--
+             * 6: Group exists, user is student and they aren't registered in the group
+             * 7: Group exists, user is student and they are already part of the group --SAME AS 5--
+             */
+            const switch_states = 4*(group_exists ? 1 : 0) + 2*(is_teacher ? 0 : 1) + (is_registered ? 1 : 0)
+            const new_group_event = [
+                {
+                    action: 6,
+                    values: {
+                        groupId: groupId
+                    }
+                },
+                {
+                    action: 3,
+                    values: {
                         groupId: groupId,
-                    },
-                    create: {
-                        groupId: groupId,
-                        groupName: (course.name ?? groupId) as string,
-                        groupDescription: (course.description ?? '') as string,
-                        subgroups: {
-                            create: {
-                                subgroupId: 'general',
-                                students: {
-                                    create: {
-                                        userId: userId,
-                                        events: {
-                                            create: {
-                                                typeId: 8,
-                                            },
-                                        },
-                                    },
-                                },
+                        subgroupId: "general"
+                    }
+                }
+            ]
+            const new_teacher_event = {
+                action: 8,
+                values: {
+                    userId,
+                    groupId
+                }
+            }
+            const new_student_event = {
+                action: 9,
+                values: {
+                    userId,
+                    groupId
+                }
+            }
+
+            switch (switch_states) {
+                case 0:
+                    await ctx.prisma.group.create({
+                        data: {
+                            groupId: groupId,
+                            groupName: groupName,
+                            groupDescription: groupDescription,
+                            teachers: {
+                                create: {
+                                    userId: userId
+                                }
                             },
-                        },
-                        events: {
-                            create: {
-                                typeId: 5,
-                            },
-                        },
-                    },
-                    update: {
-                        groupName: (course.name ?? groupId) as string,
-                        groupDescription: (course.description ?? '') as string,
-                        subgroups: {
-                            update: {
-                                where: {
-                                    groupId_subgroupId: {
-                                        groupId: groupId,
-                                        subgroupId: 'general',
-                                    },
-                                },
-                                data: {
+                            subgroups: {
+                                create: {
+                                    subgroupId: "general",
+                                    owners: {
+                                        create: {
+                                            userId: userId
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    await ctx.prisma.event.createMany({
+                        data: [...new_group_event, new_teacher_event]
+                    })
+
+                    break;
+                
+                case 2:
+                    await ctx.prisma.group.create({
+                        data: {
+                            groupId,
+                            groupName,
+                            groupDescription,
+                            subgroups: {
+                                create: {
+                                    subgroupId: "general",
                                     students: {
-                                        upsert: {
-                                            where: {
-                                                userId_groupId_subgroupId: {
-                                                    userId: userId,
-                                                    groupId: groupId,
-                                                    subgroupId: 'general',
-                                                },
-                                            },
-                                            create: {
-                                                userId: userId,
-                                                events: {
-                                                    create: {
-                                                        typeId: 8,
-                                                    },
-                                                },
-                                            },
-                                            update: {},
-                                        },
-                                    },
-                                },
-                            },
+                                        create: {
+                                            userId
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    await ctx.prisma.event.createMany({
+                        data: [...new_group_event, new_student_event]
+                    })
+
+                    break;
+
+                case 4: 
+                    await ctx.prisma.group.update({
+                        where: {
+                            groupId
                         },
-                    },
-                });
+                        data: {
+                            groupName,
+                            groupDescription,
+                            teachers: {
+                                create: {
+                                    userId
+                                }
+                            },
+                            subgroups:{
+                                update: {
+                                    where: {
+                                        groupId_subgroupId: {
+                                            groupId,
+                                            subgroupId: "general"
+                                        }
+                                    },
+                                    data: {
+                                        owners: {
+                                            create: {
+                                                userId
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    await ctx.prisma.event.create({
+                        data: new_teacher_event
+                    })
+
+                    break;
+                
+                case 6: 
+                    await ctx.prisma.group.update({
+                        where: {
+                            groupId
+                        },
+                        data: {
+                            groupName,
+                            groupDescription,
+                            subgroups: {
+                                update: {
+                                    where: {
+                                        groupId_subgroupId: {
+                                            groupId,
+                                            subgroupId: "general"
+                                        }
+                                    },
+                                    data: {
+                                        students: {
+                                            create: {
+                                                userId
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    await ctx.prisma.event.create({
+                        data: new_student_event
+                    })
+
+                    break;
+
+                default:
+                    await ctx.prisma.group.update({
+                        where: {
+                            groupId
+                        },
+                        data: {
+                            groupName,
+                            groupDescription
+                        }
+                    })
+                    break;
             }
         }
 
