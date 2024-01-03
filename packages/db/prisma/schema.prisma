@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-    provider     = "sqlite"
+    provider     = "mysql"
     url          = env("DATABASE_URL")
     relationMode = "prisma"
 }
@@ -28,8 +28,6 @@ model User {
     isStudentAt   isStudentAt[]
 
     messages Message[]
-
-    events Event[]
 }
 
 model Group {
@@ -44,8 +42,6 @@ model Group {
     subgroups Subgroup[]
 
     teachers isTeacherAt[]
-
-    events Event[]
 }
 
 model Subgroup {
@@ -58,8 +54,6 @@ model Subgroup {
     students isStudentAt[]
 
     messages Message[]
-
-    events Event[]
 
     createdAt DateTime @default(now())
 
@@ -74,8 +68,6 @@ model isTeacherAt {
     group   Group  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
     groupId String
 
-    events Event[]
-
     @@id([userId, groupId])
     @@index([userId])
     @@index([groupId])
@@ -89,8 +81,6 @@ model isStudentAt {
     groupId    String
     subgroupId String
 
-    events Event[]
-
     @@id([userId, groupId, subgroupId])
     @@index([userId])
     @@index([groupId, subgroupId])
@@ -103,8 +93,6 @@ model isOwnerOf {
     subgroup   Subgroup @relation(fields: [groupId, subgroupId], references: [groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
     groupId    String
     subgroupId String
-
-    events Event[]
 
     @@id([userId, groupId, subgroupId])
     @@index([userId])
@@ -126,8 +114,6 @@ model Message {
     createdAt DateTime  @default(now())
     updatedAt DateTime?
 
-    events Event[]
-
     @@index([authorId])
     @@index([groupId, subgroupId])
 }
@@ -136,7 +122,7 @@ model eventType {
     id          Int    @id @default(autoincrement())
     description String
 
-    events Event[]
+    Event Event[]
 }
 
 model Event {
@@ -145,29 +131,9 @@ model Event {
     type   eventType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
     typeId Int
 
-    user   User?   @relation(fields: [userId], references: [userId], onDelete: Cascade, onUpdate: Cascade)
-    userId String?
-
-    group   Group?  @relation(fields: [groupId], references: [groupId], onDelete: Cascade, onUpdate: Cascade)
-    groupId String?
-
-    subgroup   Subgroup? @relation(fields: [subgroupId, groupId], references: [subgroupId, groupId], onDelete: Cascade, onUpdate: Cascade)
-    subgroupId String?
-
-    teacherEvents isTeacherAt? @relation(fields: [userId, groupId], references: [userId, groupId], onDelete: Cascade, onUpdate: Cascade)
-    studentEvents isStudentAt? @relation(fields: [userId, groupId, subgroupId], references: [userId, groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
-    ownerEvents   isOwnerOf?   @relation(fields: [userId, groupId, subgroupId], references: [userId, groupId, subgroupId], onDelete: Cascade, onUpdate: Cascade)
-
-    message   Message? @relation(fields: [messageId], references: [messageId], onDelete: Cascade, onUpdate: Cascade)
-    messageId String?
+    values Json
 
     createdAt DateTime @default(now())
 
     @@index([typeId])
-    @@index([userId])
-    @@index([groupId])
-    @@index([messageId])
-    @@index([userId, groupId])
-    @@index([subgroupId, groupId])
-    @@index([userId, groupId, subgroupId])
 }
