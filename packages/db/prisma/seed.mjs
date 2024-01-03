@@ -3,10 +3,6 @@ const prisma = new PrismaClient()
 
 const eventTypes = [
     {
-        "id": 0,
-        "description": "Event not registered"
-    },
-    {
         "id": 1,
         "description": "User created"
     },
@@ -16,62 +12,66 @@ const eventTypes = [
     },
     {
         "id": 3,
-        "description": "Subgroup id changed"
+        "description": "Subgroup created"
     },
     {
         "id": 4,
-        "description": "Subgroup deleted"
+        "description": "Subgroup id changed"
     },
     {
         "id": 5,
-        "description": "Group created"
+        "description": "Subgroup deleted"
     },
     {
         "id": 6,
-        "description": "Group deleted"
+        "description": "Group created"
     },
     {
         "id": 7,
-        "description": "User added to group as teacher"
+        "description": "Group deleted"
     },
     {
         "id": 8,
-        "description": "User added to group as student"
+        "description": "User added to group as teacher"
     },
     {
         "id": 9,
-        "description": "User added to subgroup as owner"
+        "description": "User added to group as student"
     },
     {
         "id": 10,
-        "description": "User added to subgroup as student"
+        "description": "User added to subgroup as owner"
     },
     {
         "id": 11,
-        "description": "User upgraded to teacher of group"
+        "description": "User added to subgroup as student"
     },
     {
         "id": 12,
-        "description": "User downgraded to student of group"
+        "description": "User upgraded to teacher of group"
     },
     {
         "id": 13,
-        "description": "User removed from group"
+        "description": "User downgraded to student of group"
     },
     {
         "id": 14,
-        "description": "User upgraded to owner of subgroup"
+        "description": "User removed from group"
     },
     {
         "id": 15,
-        "description": "User downgraded to student of subgroup"
+        "description": "User upgraded to owner of subgroup"
     },
     {
         "id": 16,
-        "description": "User removed from subgroup"
+        "description": "User downgraded to student of subgroup"
     },
     {
         "id": 17,
+        "description": "User removed from subgroup"
+    },
+    {
+        "id": 18,
         "description": "Message contents updated"
     }
 ]
