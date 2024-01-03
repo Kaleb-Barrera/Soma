@@ -1,7 +1,7 @@
 import {PrismaClient} from '@prisma/client'
 const prisma = new PrismaClient()
 
-const eventTypes = [
+const actions = [
     {
         "id": 1,
         "description": "User created"
@@ -77,9 +77,9 @@ const eventTypes = [
 ]
 
 async function main(){
-    for(const type of eventTypes){
-        await prisma.eventType.create({
-            data: type
+    for(const action of actions){
+        await prisma.actionType.create({
+            data: action
         })
     }
 }

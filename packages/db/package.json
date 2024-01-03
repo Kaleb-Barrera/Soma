@@ -10,6 +10,7 @@
         "db:push": "npm run with-env prisma db push",
         "db:generate": "npm run with-env prisma generate",
         "db:migrate": "npm run with-env prisma migrate dev",
+        "db:seed": "npm run with-env ts-node prisma/seed.mjs",
         "with-env": "dotenv -e ../../.env -c --"
     },
     "prisma": {

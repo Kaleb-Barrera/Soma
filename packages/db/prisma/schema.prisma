@@ -19,7 +19,7 @@ model User {
     lastName  String?
     gender    String?
 
-    email String? @unique
+    email String @unique
 
     lastLoggedIn DateTime? @default(now())
 
@@ -118,7 +118,7 @@ model Message {
     @@index([groupId, subgroupId])
 }
 
-model eventType {
+model ActionType {
     id          Int    @id @default(autoincrement())
     description String
 
@@ -128,12 +128,12 @@ model eventType {
 model Event {
     id Int @id @default(autoincrement())
 
-    type   eventType @relation(fields: [typeId], references: [id], onDelete: Restrict, onUpdate: Cascade)
-    typeId Int
+    actionType ActionType @relation(fields: [action], references: [id], onDelete: Restrict, onUpdate: Cascade)
+    action     Int
 
     values Json
 
     createdAt DateTime @default(now())
 
-    @@index([typeId])
+    @@index([action])
 }
