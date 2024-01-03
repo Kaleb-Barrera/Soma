@@ -19,7 +19,7 @@
         "format": "prettier . --write",
         "db:generate": "turbo db:generate",
         "db:push": "turbo db:push",
-        "db:migrate": "turbo db:migrate"
+        "db:seed": "turbo db:seed"
     },
     "dependencies": {
         "turbo": "^1.11.0"
