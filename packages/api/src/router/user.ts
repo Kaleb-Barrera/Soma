@@ -13,7 +13,7 @@ export const userRouter = TRPCrouter({
                 },
             });
         }),
-    getUserBulk: protectedProcedure
+    getUsersInBulk: protectedProcedure
         .input(z.array(z.string()))
         .query(async ({ ctx, input }) => {
             const userList: User[] = [];
@@ -25,18 +25,5 @@ export const userRouter = TRPCrouter({
                     });
             }
             return userList;
-        }),
-    findEvents: protectedProcedure
-        .input(z.string())
-        .query(async ({ctx, input}) => {
-            return await ctx.prisma.event.findMany({
-                where: {
-                    values: {
-                        equals: {
-                            userId: input
-                        }
-                    }
-                }
-            })
         }),
 });

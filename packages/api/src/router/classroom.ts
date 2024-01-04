@@ -258,6 +258,7 @@ export const classroomRouter = TRPCrouter({
                             groupId: groupId,
                             groupName: groupName,
                             groupDescription: groupDescription,
+                            type: 'classroom',
                             teachers: {
                                 create: {
                                     userId: userId
@@ -287,6 +288,7 @@ export const classroomRouter = TRPCrouter({
                             groupId,
                             groupName,
                             groupDescription,
+                            type: 'classroom',
                             subgroups: {
                                 create: {
                                     subgroupId: "general",
