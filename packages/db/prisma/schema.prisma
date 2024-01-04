@@ -37,6 +37,10 @@ model Group {
 
     groupImage String?
 
+    type String
+
+    active Boolean @default(true)
+
     createdAt DateTime @default(now())
 
     subgroups Subgroup[]
