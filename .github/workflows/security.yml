@@ -1,6 +1,10 @@
 name: CI - Scan of the security
 
+# TODO: Delete push on branch feat-ci-cd-security.
 on:
+  push:
+    branches:
+      - feat-ci-cd-security
   workflow_dispatch:
 
 jobs:
