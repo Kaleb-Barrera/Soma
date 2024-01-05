@@ -1,0 +1,17 @@
+name: CI - Scan of the security
+
+on:
+  workflow_dispatch:
+
+jobs:
+  scan-code:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Delete some files
+        run: |
+          pwd
+          ls
+          rm -f README.md
+          ls
