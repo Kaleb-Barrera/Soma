@@ -32,7 +32,6 @@ jobs:
     - name: Checkout the code
       uses: actions/checkout@v4
     - name: Scan the code
-      id: njsscan
       uses: ajinabraham/njsscan-action@master
       with:
         args: '.'
