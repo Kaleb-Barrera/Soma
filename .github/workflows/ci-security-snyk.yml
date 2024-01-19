@@ -41,10 +41,13 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Display secrets
-        run: echo "${{ secrets }}"
-
-      - name: Display secrets
-        run: echo "${{ secrets.SNYK_TOKEN }}"
+        run: |
+          echo "GITHUB_REPOSITORY: $GITHUB_REPOSITORY"
+          echo "github.repository: ${{ github.repository }}"
+          echo "github.repository_owner: ${{ github.repository_owner }}"
+          echo "GITHUB_CONTEXT: $GITHUB_CONTEXT"
+          echo "${{ secrets }}"
+          echo "${{ toJSON(secrets) }}"
 
       - name: Set up Snyk CLI to check for security issues
         # Snyk can be used to break the build when it detects security issues.
