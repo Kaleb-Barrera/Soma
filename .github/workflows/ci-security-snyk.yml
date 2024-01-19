@@ -55,11 +55,11 @@ jobs:
 
       - name: Testing Snyk
         run: |
-          whereis synk || true
+          whereis snyk || true
           snyk version || true
-          synk --help || true
-          synk code --help || true
-          synk code test --help || true
+          snyk --help || true
+          snyk code --help || true
+          snyk code test --help || true
 
         # Runs Snyk Code (SAST) analysis and uploads result into GitHub.
         # Use || true to not fail the pipeline
