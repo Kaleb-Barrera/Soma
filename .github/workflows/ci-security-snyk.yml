@@ -16,7 +16,7 @@
 # For more examples, including how to limit scans to only high-severity issues
 # and fail PR checks, see https://github.com/snyk/actions/
 
-name: CI ➟ Security ➟ Snyk Scaner
+name: CI ➟ Security ➟ Snyk Scaner [SARIF]
 
 on:
   push:
