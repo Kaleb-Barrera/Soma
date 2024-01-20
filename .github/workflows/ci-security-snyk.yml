@@ -52,6 +52,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: Snyk set up the authentication token
+        run: snyk auth "${{ secrets.SNYK_TOKEN }}"
+
       - name: Snyk default organization
         run: snyk config set org="${{ secrets.SNYK_ORG_ID }}"
 
