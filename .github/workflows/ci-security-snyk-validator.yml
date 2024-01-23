@@ -20,10 +20,10 @@ name: CI ➟ Security ➟ Snyk Validator
 
 on:
   push:
-    branches: [ "feat-ci-cd-security" ]
+    branches: [ "main" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "feat-ci-cd-security" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read

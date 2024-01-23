@@ -10,10 +10,10 @@ name: CI ➟ Security ➟ NJS Scan [SARIF]
 
 on:
   push:
-    branches: [ "feat-ci-cd-security" ]
+    branches: [ "main" ]
   pull_request:
     # The branches below must be a subset of the branches above
-    branches: [ "feat-ci-cd-security" ]
+    branches: [ "main" ]
   #schedule:
   #  - cron: '22 20 * * 3'
 
