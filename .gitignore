@@ -41,3 +41,7 @@ yarn-error.log*
 
 # turbo
 .turbo
+
+# Snyk
+.dccache
+*.sarif
